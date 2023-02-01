@@ -1,6 +1,6 @@
 {
   "name": "@ezapi/aws-http-api-backend",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",
@@ -12,11 +12,11 @@
     "@types/aws-lambda": "^8.10.109",
     "@types/node": "^18.7.23",
     "eslint": "^7.32.0",
-    "eslint-config-custom": "^1.0.0-alpha.1",
-    "tsconfig": "^1.0.0-alpha.1",
+    "eslint-config-custom": "^1.0.0-alpha.2",
+    "tsconfig": "^1.0.0-alpha.2",
     "typescript": "^4.5.2"
   },
   "dependencies": {
-    "@ezapi/router-core": "^1.0.0-alpha.1"
+    "@ezapi/router-core": "^1.0.0-alpha.2"
   }
 }
