@@ -9,8 +9,8 @@
   "scripts": {
     "build": "lerna run build",
     "dev": "lerna run dev --parallel",
-    "lint": "turbo run lint",
-    "format": "lerna --write \"**/*.{ts,tsx,md}\"",
+    "lint": "lerna run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "publish-packages": "lerna run build lint && changeset version && changeset publish"
   },
   "devDependencies": {
