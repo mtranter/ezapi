@@ -1,0 +1,23 @@
+{
+  "name": "@ezapi/aws-http-api-backend",
+  "version": "0.9.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup index.ts --format cjs --dts",
+    "lint": "eslint *.ts*"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.23",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "typescript": "^4.5.2",
+    "@types/aws-lambda": "^8.10.109"
+  },
+  "dependencies": {
+    "@ezapi/router-core": "*"
+  },
+  "peerDependencies": {}
+}

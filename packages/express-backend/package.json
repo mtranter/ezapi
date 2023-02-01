@@ -1,0 +1,30 @@
+{
+  "name": "@ezapi/express-backend",
+  "version": "0.9.4",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "lint": "eslint *.ts*",
+    "build": "tsup index.ts --format cjs --dts"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.23",
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.14",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "typescript": "^4.5.2",
+    "express": "^4.18.2"
+  },
+  "dependencies": {
+    "@ezapi/router-core": "*",
+    "body-parser": "^1.20.1"
+  },
+  "peerDependencies": {
+    "express": "^4.18.2"
+  }
+}

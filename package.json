@@ -1,0 +1,29 @@
+{
+  "name": "ezapi",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build",
+    "dev": "lerna run dev --parallel",
+    "lint": "turbo run lint",
+    "format": "lerna --write \"**/*.{ts,tsx,md}\"",
+    "publish-packages": "lerna run build lint && changeset version && changeset publish"
+  },
+  "devDependencies": {
+    "eslint-config-custom": "*",
+    "lerna": "^6.4.1",
+    "prettier": "latest",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "tsup": "^6.5.0"
+  },
+  "packageManager": "pnpm@6.11.0"
+}

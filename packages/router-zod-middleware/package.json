@@ -1,0 +1,24 @@
+{
+  "name": "@ezapi/zod-middleware",
+  "version": "0.4.4",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup index.ts --format cjs --dts",
+    "lint": "eslint *.ts*"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "typescript": "^4.5.2",
+    "zod": "^3.19.1"
+  },
+  "dependencies": {
+    "@ezapi/router-core": "*"
+  },
+  "peerDependencies": {
+    "zod": "^3.19.1"
+  }
+}
