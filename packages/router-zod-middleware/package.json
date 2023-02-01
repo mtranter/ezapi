@@ -1,6 +1,6 @@
 {
   "name": "@ezapi/zod-middleware",
-  "version": "0.4.4",
+  "version": "1.0.0-alpha.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",
@@ -16,7 +16,7 @@
     "zod": "^3.19.1"
   },
   "dependencies": {
-    "@ezapi/router-core": "*"
+    "@ezapi/router-core": "^1.0.0-alpha.0"
   },
   "peerDependencies": {
     "zod": "^3.19.1"
