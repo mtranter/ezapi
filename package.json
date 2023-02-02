@@ -10,7 +10,7 @@
     "build": "lerna run build",
     "dev": "lerna run dev --parallel",
     "test": "lerna run test",
-    "lint": "lerna run lint",
+    "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "ci": "lerna run build lint"
   },
