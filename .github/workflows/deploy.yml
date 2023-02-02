@@ -12,7 +12,9 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
+      - run: npx lerna init
+      - run: yarn install --frozen-lockfile
+      - run: yarn ci
       - run: yarn lerna publish --no-private from-git
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
