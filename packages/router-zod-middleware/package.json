@@ -16,7 +16,7 @@
     "zod": "^3.19.1"
   },
   "dependencies": {
-    "@ezapi/router-core": "^1.0.1-alpha.0"
+    "@ezapi/router-core": "*"
   },
   "peerDependencies": {
     "zod": "^3.19.1"

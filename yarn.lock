@@ -337,13 +337,6 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@ezapi/router-core@^1.0.1-alpha.0":
-  version "1.0.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@ezapi/router-core/-/router-core-1.0.1-alpha.0.tgz#95c8348f648ee8013cd1d5d3bfbb0d1836b7d3b5"
-  integrity sha512-JXocCVqDuMkF2/bFlYJfb+2qhMr36bDv1JH2rWm0rvfIzA2T+8u69gUma9G+Q2J2vYyIJJ0FTvNhgNa/a6l+bA==
-  dependencies:
-    "@types/node" "^18.7.23"
-
 "@gar/promisify@^1.1.3":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
