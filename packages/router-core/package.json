@@ -20,5 +20,6 @@
   },
   "dependencies": {
     "@types/node": "^18.7.23"
-  }
+  },
+  "gitHead": "7e879f393b940602d280e2a51fbb469b46105589"
 }

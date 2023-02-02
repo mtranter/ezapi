@@ -20,5 +20,6 @@
   },
   "peerDependencies": {
     "zod": "^3.19.1"
-  }
+  },
+  "gitHead": "7e879f393b940602d280e2a51fbb469b46105589"
 }
