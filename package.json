@@ -17,8 +17,7 @@
   "devDependencies": {
     "eslint-config-custom": "*",
     "lerna": "^6.4.1",
-    "prettier": "latest",
-    "turbo": "latest"
+    "prettier": "latest"
   },
   "engines": {
     "node": ">=14.0.0"
