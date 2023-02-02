@@ -15,6 +15,8 @@ jobs:
       - run: npx lerna init
       - run: yarn install --frozen-lockfile
       - run: yarn ci-build
-      - run: yarn lerna publish --no-private -y minor
+      - run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - run: yarn lerna version --yes --no-git-tag-version --no-push $RELEASE_VERSION
+      - run: yarn lerna publish --no-private -y from-git
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
