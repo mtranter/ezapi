@@ -21,6 +21,6 @@ jobs:
       #     git config --global user.email "bot@ezapi.com"
       #     git config --global user.name "EZAPI Bot"
       #     git commit -am "Bump"
-      - run: yarn lerna publish --no-private -y --no-git-reset
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
