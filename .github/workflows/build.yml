@@ -2,7 +2,7 @@ name: Build and test
 on: 
   push:
     tags-ignore:
-      - "*"
+      - "v*"
 jobs:
   build:
     runs-on: ubuntu-latest
