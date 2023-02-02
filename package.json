@@ -6,6 +6,11 @@
     "apps/*",
     "packages/*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mtranter/ezapi.git"
+  },
+  "homepage": "https://github.com/mtranter/ezapi/blob/main/README.md",
   "scripts": {
     "build": "lerna run build",
     "dev": "lerna run dev --parallel",

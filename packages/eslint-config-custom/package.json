@@ -4,6 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mtranter/ezapi.git"
+  },
+  "homepage": "https://github.com/mtranter/ezapi/blob/main/README.md",
   "dependencies": {
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-turbo": "latest"
