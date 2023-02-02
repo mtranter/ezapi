@@ -1,12 +1,13 @@
-import { expressMiddleware, applyPrequisites } from "@ezapi/express-backend";
+import { expressMiddleware } from "@ezapi/express-backend";
 import express from "express";
+import bodyParser from "body-parser";
 import { PeopleService } from "./people-service";
 import { routes } from "./routes";
 
 const mw = expressMiddleware(routes(PeopleService()), true);
 
 const app = express();
-applyPrequisites(app);
+app.use(bodyParser.raw({ inflate: true, limit: "100kb", type: "*/*" }));
 app.use(mw);
 
 app.listen(5051, () => {

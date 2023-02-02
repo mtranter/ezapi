@@ -1,31 +1,11 @@
-import {
-  HttpMethod,
-  Router,
-  Request,
-  HandlerDefinition,
-  BackendUtils,
-} from "@ezapi/router-core";
-import {
-  Request as ExpRequest,
-  Response,
-  NextFunction,
-  Express,
-} from "express";
-import bodyParser from "body-parser";
+import { HttpMethod, Router, BackendUtils } from "@ezapi/router-core";
+import { Request as ExpRequest, Response, NextFunction } from "express";
 
 type ExpressMiddleware = (
   req: ExpRequest,
   res: Response,
   next: NextFunction
 ) => void;
-
-const bp: ExpressMiddleware = bodyParser.raw({
-  inflate: true,
-  limit: "100kb",
-  type: "*/*",
-});
-
-export const applyPrequisites = (e: Express) => e.use(bp);
 
 export const expressMiddleware = (
   router: Router | Promise<Router>,
@@ -39,7 +19,7 @@ export const expressMiddleware = (
       url: req.path,
       body: req.body as string,
       headers: req.headers,
-      query: req.query as Record<string, string | undefined>
+      query: req.query as Record<string, string | undefined>,
     });
     if (response) {
       res.status(response?.statusCode);

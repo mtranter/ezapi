@@ -1,73 +1,107 @@
-# Turborepo starter
+# EZAPI
 
-This is an official pnpm starter turborepo.
+Yet Another Typescript Web API DSL.
 
-## What's inside?
+## Features
+* Strongly typed
+* Composable Middleware. Included:
+  * JSON parsing
+  * Zod request validation
+* Pluggable backends, currently included:
+  * AWS API Gateway REST API
+  * AWS API Gateway HTTP API
+  * Express
 
-This turborepo uses [pnpm](https://pnpm.io) as a package manager. It includes the following packages/apps:
+## How To:
 
-### Apps and Packages
+#### Routes:
 
-- `docs`: a [Next.js](https://nextjs.org) app
-- `web`: another [Next.js](https://nextjs.org) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+```typescript
+// routes.ts
+import {
+  RouteBuilder,
+  Ok,
+  NotFound,
+  Created,
+} from "@ezapi/router-core";
+import { JsonParserMiddlerware } from "@ezapi/json-middleware";
+import { ZodMiddleware } from "@ezapi/zod-middleware";
+import { z } from "zod";
+import { peopleService } from "./people-service";
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+const PersonRequestProps = {
+  name: z.string(),
+};
 
-### Utilities
+const PersonRequestSchema = z.object(PersonRequestProps);
 
-This turborepo has some additional tools already setup for you:
+const PersonSchema = z.object({
+  id: z.number(),
+  ...PersonRequestProps,
+});
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+export const routes = () =>
+  RouteBuilder.withMiddleware(JsonParserMiddlerware())
+    .route("GET", "/people/{id:int}")
+    .handle(async (request) => {
+      // request.pathParams is of type: { id: number }
+      const person = await peopleService.getPerson(request.pathParams.id);
+      return person
+        ? Ok(person)
+        : NotFound(`Person ${r.pathParams.id} not found`);
+    })
+    .route("GET", "/people/name/{name}")
+    .handle(async (r) => {
+      const person = await peopleService.getPeopleByName(r.pathParams.name);
+      return Ok(person)
+    })
+    .route("PUT", "/people", ZodMiddleware(PersonRequestSchema, PersonSchema))
+    .handle(async (req) => {
+      // Zod middleware adds {safeBody: {name: string}} to request type and runtime value
+      const newPerson = await peopleService.putPerson(req.safeBody);
 
-### Build
+      // Zod middleware forces handler function to return a type compatable with PersonSchema
+      return Ok(newPerson);
+    })
+    .build();
+```
+#### Backends:
 
-To build all apps and packages, run the following command:
+##### Express
+```typescript
+// index.ts
+import { expressMiddleware } from "@ezapi/express-backend";
+import express from "express";
+import bodyParser from "body-parser";
+import { routes } from "./routes";
+
+const ezApiMiddleware = expressMiddleware(routes(), true);
+
+const app = express();
+// Ezapi expres backend requires raw body parser
+app.use(bodyParser.raw({ inflate: true, limit: "100kb", type: "*/*" }));
+app.use(ezApiMiddleware);
+
+app.listen(5051, () => {
+  console.log("listening on 5051");
+});
 
 ```
-cd my-turborepo
-pnpm run build
+
+##### AWS HTTP API
+```typescript
+import { httpApiHandler } from "@ezapi/aws-http-api-backend";
+import { routes } from "./routes";
+
+const apiStage = "live"
+export const handler = httpApiHandler(routes(), apiStage);
 ```
 
-### Develop
+##### AWS REST API
+```typescript
+import { restApiHandler } from "@ezapi/aws-rest-api-backend";
+import { routes } from "./routes";
 
-To develop all apps and packages, run the following command:
-
+const apiStage = "live"
+export const handler = restApiHandler(routes(), apiStage);
 ```
-cd my-turborepo
-pnpm run dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-pnpm dlx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
-
-```
-pnpm dlx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Pipelines](https://turborepo.org/docs/core-concepts/pipelines)
-- [Caching](https://turborepo.org/docs/core-concepts/caching)
-- [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching)
-- [Scoped Tasks](https://turborepo.org/docs/core-concepts/scopes)
-- [Configuration Options](https://turborepo.org/docs/reference/configuration)
-- [CLI Usage](https://turborepo.org/docs/reference/command-line-reference)
