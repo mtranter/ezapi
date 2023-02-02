@@ -16,7 +16,10 @@ export const JsonParserMiddlerware = <A extends {}>() =>
       }
       let result: object = {};
       try {
-        result = req.body && req.body.length ? JSON.parse(req.body.toString()) : undefined;
+        result =
+          req.body && req.body.length
+            ? JSON.parse(req.body.toString())
+            : undefined;
       } catch (e) {
         console.log(e);
         return Promise.resolve({

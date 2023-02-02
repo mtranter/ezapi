@@ -82,7 +82,7 @@ const _RouteBuilder = <A extends {}, B extends {} = A, R1 = Body, R2 = R1>(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (mw || NullMiddleware<A, R1>()) as any,
         definitions
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ) as any,
   };
 };

@@ -1,9 +1,4 @@
-import {
-  RouteBuilder,
-  Ok,
-  NotFound,
-  Created,
-} from "@ezapi/router-core";
+import { RouteBuilder, Ok, NotFound, Created } from "@ezapi/router-core";
 import { JsonParserMiddlerware } from "@ezapi/json-middleware";
 import { ZodMiddleware } from "@ezapi/zod-middleware";
 import { z } from "zod";
@@ -32,7 +27,7 @@ export const routes = (svc: PeopleService) =>
     .route("GET", "/people/name/{name}")
     .handle(async (r) => {
       const person = await svc.getPeopleByName(r.pathParams.name);
-      return Ok(person)
+      return Ok(person);
     })
     .route("POST", "/people", ZodMiddleware(PersonRequestSchema, PersonSchema))
     .handle(async (req) => {

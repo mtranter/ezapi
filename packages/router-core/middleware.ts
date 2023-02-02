@@ -1,15 +1,25 @@
 import { Body, Handler, Request, Response } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-type _Middleware<A extends {}, B extends {}, R1 = Body, R2 = R1> = <Url extends string>(
+type _Middleware<A extends {}, B extends {}, R1 = Body, R2 = R1> = <
+  Url extends string
+>(
   handler: Handler<Url, B, R2>
 ) => Handler<Url, A, R1>;
 
-export type Middleware<A extends {}, B extends {}, R1 = Body, R2 = R1> = _Middleware<A, B, R1, R2> & MiddlewareOps<A, B, R1, R2>;
-export type IdMiddleware<A extends {}, R1 = Body> = _Middleware<A, A, R1, R1> & MiddlewareOps<A, A, R1, R1>;
+export type Middleware<
+  A extends {},
+  B extends {},
+  R1 = Body,
+  R2 = R1
+> = _Middleware<A, B, R1, R2> & MiddlewareOps<A, B, R1, R2>;
+export type IdMiddleware<A extends {}, R1 = Body> = _Middleware<A, A, R1, R1> &
+  MiddlewareOps<A, A, R1, R1>;
 
 type MiddlewareOps<A extends {}, B extends {}, R1 = Body, R2 = R1> = {
-  andThen: <C extends {}, R3 = R2>(next: Middleware<B, C, R2, R3>) => Middleware<A, B & C, R1, R3>;
+  andThen: <C extends {}, R3 = R2>(
+    next: Middleware<B, C, R2, R3>
+  ) => Middleware<A, B & C, R1, R3>;
 };
 
 const compose =
@@ -25,7 +35,8 @@ const MiddlewareOps = <A extends {}, B extends {}, R1 = Body, R2 = R1>(
   mw: _Middleware<A, B, R1, R2>
 ): Middleware<A, B, R1, R2> => {
   const _mw = <Middleware<A, B, R1, R2>>mw;
-  _mw.andThen = <C extends {}, R3 = R2>(next: Middleware<B, C, R2, R3>) => MiddlewareOps(compose(mw, next));
+  _mw.andThen = <C extends {}, R3 = R2>(next: Middleware<B, C, R2, R3>) =>
+    MiddlewareOps(compose(mw, next));
   return _mw;
 };
 
@@ -38,10 +49,13 @@ export const Middleware = {
       handler: Handler<Url, B, R2>
     ) => Promise<Response<R1>> | Response<R1>
   ): Middleware<A, B, R1, R2> => {
-    const off: _Middleware<A, B, R1, R2> = ((hb) => (r) => f(r, hb));
+    const off: _Middleware<A, B, R1, R2> = (hb) => (r) => f(r, hb);
     return MiddlewareOps(off);
   },
 };
 
 // export const NullMiddleware: IdMiddleware<{}, Body> = MiddlewareOps(h => h)
-export const NullMiddleware: <A extends {} = {}, R = Body>() => IdMiddleware<{}, Body> = () => MiddlewareOps(h => h)
+export const NullMiddleware: <A extends {} = {}, R = Body>() => IdMiddleware<
+  {},
+  Body
+> = () => MiddlewareOps((h) => h);

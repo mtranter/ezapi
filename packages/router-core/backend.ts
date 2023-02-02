@@ -9,8 +9,9 @@ const urlRegex = /\{((\w+)\+?(:\w+)?)\}(.)?/g;
 
 const pathPatternToRegex = (pattern: string) =>
   new RegExp(
-    pattern.replace(urlRegex, "(?<$2>[^\\$4]+)$4").replace("[^\\]", pattern.endsWith("+}") ? "[^\\b]" : "[^\\b/]") +
-      "$"
+    pattern
+      .replace(urlRegex, "(?<$2>[^\\$4]+)$4")
+      .replace("[^\\]", pattern.endsWith("+}") ? "[^\\b]" : "[^\\b/]") + "$"
   );
 
 export const BackendUtils = {
@@ -116,7 +117,7 @@ export const BackendUtils = {
                       };
                     }
                   } else {
-                    return  {
+                    return {
                       ...prev,
                       groups: { ...prev.groups, [k]: (groups || {})[k] },
                     };

@@ -3,14 +3,15 @@
 Yet Another Typescript Web API DSL.
 
 ## Features
-* Strongly typed
-* Composable Middleware. Included:
-  * JSON parsing
-  * Zod request validation
-* Pluggable backends, currently included:
-  * AWS API Gateway REST API
-  * AWS API Gateway HTTP API
-  * Express
+
+- Strongly typed
+- Composable Middleware. Included:
+  - JSON parsing
+  - Zod request validation
+- Pluggable backends, currently included:
+  - AWS API Gateway REST API
+  - AWS API Gateway HTTP API
+  - Express
 
 ## How To:
 
@@ -18,12 +19,7 @@ Yet Another Typescript Web API DSL.
 
 ```typescript
 // routes.ts
-import {
-  RouteBuilder,
-  Ok,
-  NotFound,
-  Created,
-} from "@ezapi/router-core";
+import { RouteBuilder, Ok, NotFound, Created } from "@ezapi/router-core";
 import { JsonParserMiddlerware } from "@ezapi/json-middleware";
 import { ZodMiddleware } from "@ezapi/zod-middleware";
 import { z } from "zod";
@@ -53,7 +49,7 @@ export const routes = () =>
     .route("GET", "/people/name/{name}")
     .handle(async (r) => {
       const person = await peopleService.getPeopleByName(r.pathParams.name);
-      return Ok(person)
+      return Ok(person);
     })
     .route("PUT", "/people", ZodMiddleware(PersonRequestSchema, PersonSchema))
     .handle(async (req) => {
@@ -65,9 +61,11 @@ export const routes = () =>
     })
     .build();
 ```
+
 #### Backends:
 
 ##### Express
+
 ```typescript
 // index.ts
 import { expressMiddleware } from "@ezapi/express-backend";
@@ -85,23 +83,24 @@ app.use(ezApiMiddleware);
 app.listen(5051, () => {
   console.log("listening on 5051");
 });
-
 ```
 
 ##### AWS HTTP API
+
 ```typescript
 import { httpApiHandler } from "@ezapi/aws-http-api-backend";
 import { routes } from "./routes";
 
-const apiStage = "live"
+const apiStage = "live";
 export const handler = httpApiHandler(routes(), apiStage);
 ```
 
 ##### AWS REST API
+
 ```typescript
 import { restApiHandler } from "@ezapi/aws-rest-api-backend";
 import { routes } from "./routes";
 
-const apiStage = "live"
+const apiStage = "live";
 export const handler = restApiHandler(routes(), apiStage);
 ```

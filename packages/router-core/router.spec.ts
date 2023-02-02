@@ -56,25 +56,25 @@ describe("Router", () => {
       expect(request.pathParams.id).toBe(1);
     });
     it("should route a simple path with multiple typed parameters", async () => {
-      const template = "/users/{id:int}/name/{name:string}" as const
+      const template = "/users/{id:int}/name/{name:string}" as const;
       const response = await makeRequest("GET", template, "/users/1/name/fred");
       expect(response).toBeTruthy();
       expect(response?.statusCode).toBe(200);
-      const request = JSON.parse(
-        response!.body.toString()
-      ) as Request<typeof template>;
+      const request = JSON.parse(response!.body.toString()) as Request<
+        typeof template
+      >;
       expect(request.url).toBe("/users/1/name/fred");
       expect(request.pathParams.id).toBe(1);
       expect(request.pathParams.name).toBe("fred");
     });
     it("should route a simple proxy path", async () => {
-      const template = "/users/{proxy+}" as const
+      const template = "/users/{proxy+}" as const;
       const response = await makeRequest("GET", template, "/users/1/name/fred");
       expect(response).toBeTruthy();
       expect(response?.statusCode).toBe(200);
-      const request = JSON.parse(
-        response!.body.toString()
-      ) as Request<typeof template>;
+      const request = JSON.parse(response!.body.toString()) as Request<
+        typeof template
+      >;
       expect(request.url).toBe("/users/1/name/fred");
       expect(request.pathParams.proxy).toBe("1/name/fred");
     });

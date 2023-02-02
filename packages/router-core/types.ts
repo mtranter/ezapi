@@ -47,7 +47,9 @@ type QueryParams<
   A extends string,
   Seed = Record<string, string | undefined>
 > = A extends `{${infer AA}}${infer Tail}`
-  ? Tail extends `&${infer Q}` ? Merge<Seed & UrlParam<AA> & QueryParams<Q>> : Merge<Seed & UrlParam<AA>>
+  ? Tail extends `&${infer Q}`
+    ? Merge<Seed & UrlParam<AA> & QueryParams<Q>>
+    : Merge<Seed & UrlParam<AA>>
   : Seed;
 
 export type Body = string | Buffer;
@@ -56,7 +58,9 @@ export type Request<Url extends string> = {
   pathParams: Url extends `${infer P}?${infer _}`
     ? PathParams<P>
     : PathParams<Url>;
-  queryParams: Url extends `${infer _}?${infer Q}` ? QueryParams<Q> & Record<string, string | undefined> : Record<string, string> | undefined;
+  queryParams: Url extends `${infer _}?${infer Q}`
+    ? QueryParams<Q> & Record<string, string | undefined>
+    : Record<string, string> | undefined;
   body?: Body;
   url: Url;
   method: HttpMethod;

@@ -31,9 +31,10 @@ export const ZodMiddleware = <A, R = unknown>(
   );
 
 export const ZodFallThroughMiddleware = <A>(z: ZodType<A>) =>
-  Middleware.of<{ jsonBody: unknown }, { parsedBody: SafeParseReturnType<A, A> }>(
-    (req, handler) => {
-      const parseResult = z.safeParse(req.body);
-      return handler({ ...req, parsedBody: parseResult });
-    }
-  );
+  Middleware.of<
+    { jsonBody: unknown },
+    { parsedBody: SafeParseReturnType<A, A> }
+  >((req, handler) => {
+    const parseResult = z.safeParse(req.body);
+    return handler({ ...req, parsedBody: parseResult });
+  });

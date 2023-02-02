@@ -1,26 +1,26 @@
 type Right<A> = {
-    value: A,
-    isRight: true
+  value: A;
+  isRight: true;
 };
 type Left<A> = {
-    value: A,
-    isRight: false
+  value: A;
+  isRight: false;
 };
 
-type LeftOrRight<E, A> = (Right<A> | Left<E>)
+type LeftOrRight<E, A> = Right<A> | Left<E>;
 
-export const isRight = <E, A>(e: LeftOrRight<E, A>): e is Right<A> => e.isRight
+export const isRight = <E, A>(e: LeftOrRight<E, A>): e is Right<A> => e.isRight;
 
 type EitherOps<E, A> = {
-    map: <B>(f: (a: A) => B) => Either<E, B>
-    leftMap: <B>(f: (a: E) => B) => Either<B, A>
-    flatMap: <B>(f: (a: A) => Either<E, B>) => Either<E, B>
-    leftFlatMap: <B>(f: (a: E) => Either<B, A>) => Either<B, A>
-    match: <B>(m: { right: (b: A) => B, left: (e: E) => B }) => B
+  map: <B>(f: (a: A) => B) => Either<E, B>;
+  leftMap: <B>(f: (a: E) => B) => Either<B, A>;
+  flatMap: <B>(f: (a: A) => Either<E, B>) => Either<E, B>;
+  leftFlatMap: <B>(f: (a: E) => Either<B, A>) => Either<B, A>;
+  match: <B>(m: { right: (b: A) => B; left: (e: E) => B }) => B;
 };
 
-export type Either<E, A> = LeftOrRight<E, A> & EitherOps<E, A>
-  
+export type Either<E, A> = LeftOrRight<E, A> & EitherOps<E, A>;
+
 const makeOps = <E, A>(a: LeftOrRight<E, A>): Either<E, A> => ({
   ...a,
   ...{

@@ -5,7 +5,7 @@ export interface QueryStringParserFault {
   type: string;
   message: string;
 }
-const errorSymbol = Symbol("ERROR")
+const errorSymbol = Symbol("ERROR");
 export interface QueryStringParserError {
   [errorSymbol]: true;
   faults: QueryStringParserFault[];
