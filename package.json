@@ -12,7 +12,7 @@
     "test": "lerna run test",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "ci": "lerna run build lint"
+    "ci": "lerna run build test"
   },
   "devDependencies": {
     "eslint-config-custom": "*",
