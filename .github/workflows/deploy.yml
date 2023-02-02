@@ -13,7 +13,6 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npx lerna init
-      - run: npx lerna bootstrap
       - run: yarn install --frozen-lockfile
       - run: yarn ci
       - run: yarn lerna publish --no-private from-git
