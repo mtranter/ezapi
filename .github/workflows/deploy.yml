@@ -15,6 +15,6 @@ jobs:
       - run: npx lerna init
       - run: yarn install --frozen-lockfile
       - run: yarn ci
-      - run: yarn lerna publish --no-private from-git
+      - run: yarn lerna publish --no-private -y from-git
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

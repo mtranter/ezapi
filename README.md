@@ -5,15 +5,18 @@ Yet Another Typescript Web API DSL.
 ## Features
 
 - Strongly typed
-- Composable Middleware. Included:
-  - JSON parsing
-  - Zod request validation
-- Pluggable backends, currently included:
-  - AWS API Gateway REST API
-  - AWS API Gateway HTTP API
-  - Express
+- Composable Middleware. Included in this repo:
+  - JSON parsing (@ezapi/json-middleware)
+  - Zod request validation (@ezapi/zod-middleware)
+- Pluggable backends. Included in this repo:
+  - AWS API Gateway REST API (@ezapi/aws-rest-api-backend")
+  - AWS API Gateway HTTP API (@ezapi/aws-http-api-backend")
+  - Express (@ezapi/express-backend)
 
 ## How To:
+
+#### Install
+`$> npm install --save @ezapi/router-core @ezapi/json-middleware @ezapi/zod-middleware @ezapi/<your>-backend`
 
 #### Routes:
 
