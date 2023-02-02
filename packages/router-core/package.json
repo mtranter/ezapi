@@ -5,8 +5,10 @@
   "types": "./dist/index.d.ts",
   "license": "MIT",
   "repository": {
-    ""
+    "type": "git",
+    "url": "https://github.com/mtranter/ezapi.git"
   },
+  "homepage": "https://github.com/mtranter/ezapi/blob/main/README.md",
   "scripts": {
     "build": "tsup index.ts --format cjs --dts",
     "lint": "eslint *.ts*",
