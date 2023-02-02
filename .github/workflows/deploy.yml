@@ -14,7 +14,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npx lerna init
       - run: yarn install --frozen-lockfile
-      - run: yarn ci
-      - run: yarn lerna publish --no-private -y from-git
+      - run: yarn ci-build
+      - run: yarn lerna publish --no-private -y minor
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
