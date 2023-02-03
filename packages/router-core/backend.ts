@@ -9,7 +9,7 @@ const urlRegex = /\{((\w+)\+?(:\w+)?)\}(.)?/g;
 
 const pathPatternToRegex = (pattern: string) =>
   new RegExp(
-    pattern
+    "^" + pattern
       .replace(urlRegex, "(?<$2>[^\\$4]+)$4")
       .replace("[^\\]", pattern.endsWith("+}") ? "[^\\b]" : "[^\\b/]") + "$"
   );
