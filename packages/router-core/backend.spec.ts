@@ -49,5 +49,17 @@ describe("BackendUtils", () => {
       expect((result.groups as any).id).toBe(`${dummyUuid}/my-id`);
       expect((result.groups as any).action).toBe(`create`);
     });
+    it("should parse url long url with many params", () => {
+      const dummyUuid = "12345678-1234-1234-1234-123456789012";
+      const parser = BackendUtils.urlParser();
+      const result = parser.parseUrl(
+        "/courses/{courseId}/topics/{topicId}/subtopics/{subtopicId}/content",
+        `/courses/6a1635f1-b7ff-4a07-a1c2-c74bc57ee258/topics/26f2fb1f-5040-4d66-b158-007c47aa7a77/subtopics/3e9cf87c-a027-4171-abb9-c2cefa3d3048/content`
+      );
+      expect(result.isMatch).toBe(true);
+      expect((result.groups as any).courseId).toBe(`6a1635f1-b7ff-4a07-a1c2-c74bc57ee258`);
+    });
   });
 });
+
+

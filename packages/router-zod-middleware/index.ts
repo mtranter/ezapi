@@ -14,7 +14,7 @@ export const ZodMiddleware = <A, R = unknown>(
         const res = await handler({ ...req, safeBody: parseResult.data });
         const success = returnType?.safeParse(res.body).success ?? true;
         return {
-          statusCode: success ? 200 : 500,
+          statusCode: success ? res.statusCode : 500,
           body: success
             ? res.body
             : "Internal server error. Unexpected response",
