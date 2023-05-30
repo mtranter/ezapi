@@ -1,4 +1,4 @@
-import { Body, Handler, Request, Response } from "./types";
+import { Body, Handler, Request, Response, Prettify } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type _Middleware<A extends {}, B extends {}, R1 = Body, R2 = R1> = <
@@ -26,7 +26,7 @@ const compose =
   <A extends {}, B extends {}, C extends {}, R1 = Body, R2 = R1, R3 = R2>(
     m1: _Middleware<A, B, R1, R2>,
     m2: _Middleware<B, C, R2, R3>
-  ): _Middleware<A, B & C, R1, R3> =>
+  ): _Middleware<A, Prettify<B & C>, R1, R3> =>
   (r) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     m1(m2(r as Handler<any, C, R3>));

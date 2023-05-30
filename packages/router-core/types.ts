@@ -79,3 +79,7 @@ export type Response<B = Body> = {
 export type Handler<Url extends string, A extends {} = {}, B = Body> = (
   req: Request<Url> & A
 ) => Promise<Response<B>> | Response<B>;
+
+export type Prettify<A> = {
+  [K in keyof A]: A[K];
+} & {}

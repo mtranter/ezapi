@@ -1,5 +1,5 @@
 import { Middleware, NullMiddleware } from "./middleware";
-import { Handler, Body } from "./types";
+import { Handler, Body, Prettify } from "./types";
 
 type ReadonlyHttpMethods = "GET" | "OPTIONS" | "HEAD";
 export type HttpMethod =
@@ -20,16 +20,17 @@ export type Router = {
   compose: (other: Router) => Router;
 };
 
+
 export type RouteBuilder<A extends {} = {}, R1 = Body> = {
   build: () => Router;
   withMiddleware: <B extends {}, R2>(
     m: Middleware<A, B, R1, R2>
-  ) => RouteBuilder<A & B, R2>;
+  ) => RouteBuilder<Prettify<A & B>, R2>;
   route: <Url extends string, B extends {} = A, R2 = R1>(
     method: HttpMethod,
     url: Url,
     middleware?: Middleware<A, B, R1, R2>
-  ) => DefineHandler<Url, A & B, R2, A, R1>;
+  ) => DefineHandler<Url, Prettify<A & B>, R2, A, R1>;
 };
 
 type DefineHandler<Url extends string, A extends {}, R1, AP extends {}, RP> = {
