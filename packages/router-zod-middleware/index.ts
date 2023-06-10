@@ -1,13 +1,13 @@
-import { SafeParseReturnType, ZodError, ZodType } from "zod";
-import { Middleware } from "@ezapi/router-core";
+import { ZodError, ZodType } from "zod";
+import { HttpMiddleware } from "@ezapi/router-core";
 
-export const ZodMiddleware = <A, R = unknown>(
-  bodyType: ZodType<A>,
+export const ZodMiddleware = <Body, R>(
+  bodyType: ZodType<Body>,
   returnType?: ZodType<R>,
-  errorTransform?: (err: ZodError<A>) => unknown
+  errorTransform?: (err: ZodError<Body>) => unknown
 ) =>
   // eslint-disable-next-line @typescript-eslint/ban-types
-  Middleware.of<{ jsonBody: {} }, { safeBody: A }, unknown, R>(
+  HttpMiddleware.of<{ jsonBody: unknown }, { safeBody: Body }, unknown, R>(
     async (req, handler) => {
       const parseResult = bodyType.safeParse(req.jsonBody);
       if (parseResult.success) {
@@ -30,12 +30,3 @@ export const ZodMiddleware = <A, R = unknown>(
       }
     }
   );
-
-export const ZodFallThroughMiddleware = <A>(z: ZodType<A>) =>
-  Middleware.of<
-    { jsonBody: unknown },
-    { parsedBody: SafeParseReturnType<A, A> }
-  >((req, handler) => {
-    const parseResult = z.safeParse(req.body);
-    return handler({ ...req, parsedBody: parseResult });
-  });

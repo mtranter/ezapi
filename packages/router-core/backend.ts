@@ -1,7 +1,7 @@
 import { ParamParser, ParamParsers } from "./param-parser";
 import { isQsError, parseQuery } from "./query-parser";
 import { HandlerDefinition, HttpMethod, Router } from "./router-builder";
-import { Request, Response } from "./types";
+import { Request, RequestParams, Response } from "./types";
 
 const sizeOf = (o?: unknown) => (o ? Object.keys(o).length : 0);
 
@@ -9,9 +9,11 @@ const urlRegex = /\{((\w+)\+?(:\w+)?)\}(.)?/g;
 
 const pathPatternToRegex = (pattern: string) =>
   new RegExp(
-    "^" + pattern
-      .replace(urlRegex, "(?<$2>[^\\$4]+)$4")
-      .replace("[^\\]", pattern.endsWith("+}") ? "[^\\b]" : "[^\\b/]") + "$"
+    "^" +
+      pattern
+        .replace(urlRegex, "(?<$2>[^\\$4]+)$4")
+        .replace("[^\\]", pattern.endsWith("+}") ? "[^\\b]" : "[^\\b/]") +
+      "$"
   );
 
 export const BackendUtils = {
@@ -23,11 +25,14 @@ export const BackendUtils = {
       headers,
       body,
       query,
-    }: Pick<Request<string>, "body" | "headers" | "method" | "url"> & {
+    }: Pick<
+      Request<RequestParams<string>>,
+      "body" | "headers" | "method" | "url"
+    > & {
       query: Record<string, string | undefined>;
     }): Promise<Response | undefined> => {
       const urlParser = BackendUtils.urlParser();
-      const requestAndHandler = router.definitions().reduce(
+      const requestAndDefinition = router.definitions().reduce(
         (p, def) => {
           if (!(def.method == "ANY" || def.method == method.toUpperCase())) {
             return p;
@@ -48,7 +53,7 @@ export const BackendUtils = {
             return p;
           }
           if (sizeOf(pathParams.groups) >= sizeOf(p[0]?.pathParams)) {
-            const retval: Request<string> = {
+            const retval: Request<RequestParams<string>> = {
               method: method.toUpperCase() as HttpMethod,
               // eslint-disable-next-line @typescript-eslint/ban-types
               pathParams: pathParams.groups as {},
@@ -61,25 +66,38 @@ export const BackendUtils = {
               url,
             };
             return [retval, def] as [
-              Request<string> | undefined,
+              Request<RequestParams<string>> | undefined,
               HandlerDefinition | undefined
             ];
           }
           return p;
         },
         [undefined, undefined] as [
-          Request<string> | undefined,
+          Request<RequestParams<string>> | undefined,
           HandlerDefinition | undefined
         ]
       );
-      if (requestAndHandler) {
-        const response = await requestAndHandler[1]?.handler(
+      if (requestAndDefinition) {
+        const handlerName = requestAndDefinition[1]?.name;
+        if (!handlerName) {
+          return;
+        }
+        const handler = router.handlers()[handlerName];
+        if (!handler) {
+          return {
+            statusCode: 500,
+            body: "No handler found",
+          };
+        }
+
+        const response = await handler(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          requestAndHandler[0]!
+          requestAndDefinition[0]!
         );
         return response;
+      } else {
+        return;
       }
-      return;
     },
   urlParser: () => {
     const cache: Record<string, RegExp> = {};

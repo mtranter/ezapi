@@ -1,11 +1,11 @@
-import { Middleware, Body } from "@ezapi/router-core";
+import { Middleware, Body, Request, Response, RequestParams, HttpMiddleware } from "@ezapi/router-core";
 import mimeMatch from "mime-match";
 
 const DEFAULT_MIME_TYPE = "application/json";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const JsonParserMiddlerware = <A extends {}>() =>
-  Middleware.of<A, { jsonBody: object }, Body, unknown>(
+export const JsonParserMiddlerware =
+  HttpMiddleware.of<{}, { jsonBody: object }, Body, unknown>(
     async (req, handler) => {
       const contentType = req.headers["content-type"];
       if (!mimeMatch(DEFAULT_MIME_TYPE, contentType as string)) {

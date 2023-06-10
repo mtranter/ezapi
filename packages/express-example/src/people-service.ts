@@ -20,8 +20,8 @@ export const PeopleService = (): PeopleService => {
     getPerson: (id: number) => Promise.resolve(database[id]),
     getPeopleByName: (name) =>
       Promise.resolve(Object.values(database).filter((p) => p.name === name)),
-    putPerson: (props: PersonRequest) => {
-      const id = ++counter;
+    putPerson: (props: PersonRequest | Person) => {
+      const id = (props as Person).id || ++counter;
       const newPerson = { id, ...props };
       database[id] = newPerson;
       return Promise.resolve(newPerson);

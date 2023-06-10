@@ -1,5 +1,12 @@
-import { Middleware, NullMiddleware } from "./middleware";
-import { Handler, Body, Prettify } from "./types";
+import { HttpMiddleware, Middleware, NullMiddleware } from "./middleware";
+import {
+  Handler,
+  Body,
+  Response,
+  Prettify,
+  Request,
+  RequestParams,
+} from "./types";
 
 type ReadonlyHttpMethods = "GET" | "OPTIONS" | "HEAD";
 export type HttpMethod =
@@ -12,100 +19,99 @@ export type HttpMethod =
 export type HandlerDefinition = {
   method: HttpMethod;
   pathPattern: string;
-  handler: Handler<string, {}, Body>;
+  name: string;
+  middleware?: Middleware<
+    Request<any>,
+    Request<any>,
+    Response<any>,
+    Response<any>
+  >;
 };
 
 export type Router = {
   definitions: () => ReadonlyArray<HandlerDefinition>;
+  handlers: () => { [k: string]: Handler<Request<any>, Response<any>> };
   compose: (other: Router) => Router;
 };
 
-
-export type RouteBuilder<A extends {} = {}, R1 = Body> = {
-  build: () => Router;
-  withMiddleware: <B extends {}, R2>(
-    m: Middleware<A, B, R1, R2>
-  ) => RouteBuilder<Prettify<A & B>, R2>;
-  route: <Url extends string, B extends {} = A, R2 = R1>(
-    method: HttpMethod,
-    url: Url,
-    middleware?: Middleware<A, B, R1, R2>
-  ) => DefineHandler<Url, Prettify<A & B>, R2, A, R1>;
-};
-
-type DefineHandler<Url extends string, A extends {}, R1, AP extends {}, RP> = {
-  handle: (h: Handler<Url, A, R1>) => RouteBuilder<AP, RP>;
-};
-
-const DefineHandler = <Url extends string, A extends {}, R, AP extends {}, RP>(
-  method: HttpMethod,
-  url: Url,
-  globalMiddleware: Middleware<AP, A, Body, RP>,
-  middleware: Middleware<A, AP, RP, R>,
-  definitions: HandlerDefinition[]
-): DefineHandler<Url, A, R, AP, RP> => {
-  return {
-    handle: (h) => {
-      const handler = globalMiddleware.andThen(middleware)(h);
-      const def: HandlerDefinition = {
-        method,
-        pathPattern: url,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        handler: handler as unknown as Handler<any, any>,
-      };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return _RouteBuilder([...definitions, def], globalMiddleware) as any;
-    },
-  };
-};
-
-const Router = (definitions: HandlerDefinition[]): Router => ({
+const Router = (
+  definitions: HandlerDefinition[],
+  handlers: { [k: string]: Handler<Request<any>, Response<any>> }
+): Router => ({
   definitions: () => definitions,
-  compose: (other) => Router([...definitions, ...other.definitions()]),
+  handlers: () => handlers,
+  compose: (other) =>
+    Router([...definitions, ...other.definitions()], {
+      ...handlers,
+      ...other.handlers(),
+    }),
 });
 
-const _RouteBuilder = <A extends {}, B extends {} = A, R1 = Body, R2 = R1>(
+export type HandlersOf<R> = R extends RouteBuilder<infer _, infer __, infer H> ? H : never;
+export type RouteBuilder<
+  A extends RequestParams<string>,
+  R1 = Body,
+  Handlers = {}
+> = {
+  build: (handers: Handlers) => Router;
+  withMiddleware: <B, R2>(
+    m: Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
+  ) => RouteBuilder<Prettify<A & B>, R2>;
+  route: <N extends string, Url extends string, B = A, R2 = R1>(
+    name: N,
+    method: HttpMethod,
+    url: Url,
+    middleware?: Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
+  ) => RouteBuilder<
+    A,
+    R1,
+    Prettify<Handlers & { [K in N]: Handler<Request<Prettify<RequestParams<Url> & B>>, Response<R2>> }>
+  >;
+};
+
+const _RouteBuilder = <
+  A extends RequestParams<string>,
+  B extends RequestParams<string> = A,
+  R1 = Body,
+  R2 = R1
+>(
   definitions: HandlerDefinition[],
-  globalMiddleware: Middleware<A, B, R1, R2>
+  globalMiddleware?: Middleware<
+    Request<A>,
+    Request<B>,
+    Response<R1>,
+    Response<R2>
+  >
 ): RouteBuilder<B, R2> => {
   return {
-    build: () => Router(definitions),
-    withMiddleware: <BB extends {}, R3>(mw: Middleware<B, BB, R2, R3>) => {
-      const next = globalMiddleware.andThen(mw);
-      return _RouteBuilder(definitions, next);
+    build: (handlers) => Router(definitions, handlers),
+    withMiddleware: <BB, R3>(
+      mw: Middleware<Request<B>, Request<BB>, Response<R2>, Response<R3>>
+    ) => {
+      const next = globalMiddleware ? globalMiddleware.andThen(mw) : mw;
+      return _RouteBuilder(definitions, next as any) as RouteBuilder<
+        Prettify<B & BB>,
+        R3
+      >;
     },
-    route: (method, url, mw) =>
-      DefineHandler(
-        method,
-        url,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        globalMiddleware as any,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (mw || NullMiddleware<A, R1>()) as any,
-        definitions
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as any,
+    route: (name, method, url, mw) =>
+      _RouteBuilder(
+        [
+          ...definitions,
+          {
+            method,
+            pathPattern: url,
+            name,
+            middleware: globalMiddleware
+              ? mw
+                ? globalMiddleware.andThen(mw)
+                : globalMiddleware
+              : mw,
+          },
+        ],
+        globalMiddleware
+      ),
   };
 };
 
-export const RouteBuilder = _RouteBuilder([], NullMiddleware());
-
-// const JsonParserMiddlerware = Middleware.of<any, { jsonBody: object }>((req, handler) => {
-//   let result: object = {};
-//   try {
-//     result = JSON.parse(req.body.toString());
-//   } catch {
-//     return Promise.resolve({
-//       statusCode: 400,
-//       body: "Invalid JSON",
-//     });
-//   }
-//   return handler({ ...req, jsonBody: result });
-// });
-// const router = Router;
-// router
-//   .route("POST", "/people/{id:int}")
-//   .withMiddleware(JsonParserMiddlerware)
-//   .handle((r) => r.jsonBody)
-//   .route("GET", "/people/name/{name}")
-//   .handle((p) => p.pathParams.name);
+export const RouteBuilder = _RouteBuilder([]);

@@ -5,6 +5,7 @@ Yet Another Typescript Web API DSL.
 ## Features
 
 - Strongly typed
+- Seperate route definitions from implementations. Easy Testing! Hooray!!
 - Composable Middleware. Included in this repo:
   - JSON parsing (@ezapi/json-middleware)
   - Zod request validation (@ezapi/zod-middleware)

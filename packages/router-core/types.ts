@@ -19,7 +19,7 @@ type PathParam<S extends string> = S extends `${infer Var}:${infer VarType}`
   ? { readonly [key in Var]: string }
   : never;
 
-type PathParams<
+export type PathParams<
   A extends string,
   Seed = {}
 > = A extends `{${infer AA}}${infer Tail}`
@@ -43,7 +43,7 @@ type UrlParam<
   ? { readonly [key in Var]: P }
   : never;
 
-type QueryParams<
+export type QueryParams<
   A extends string,
   Seed = Record<string, string | undefined>
 > = A extends `{${infer AA}}${infer Tail}`
@@ -53,19 +53,16 @@ type QueryParams<
   : Seed;
 
 export type Body = string | Buffer;
+export type RequestParams<S extends string> = { pathParams: PathParams<S>; queryParams: QueryParams<S> };
 
-export type Request<Url extends string> = {
-  pathParams: Url extends `${infer P}?${infer _}`
-    ? PathParams<P>
-    : PathParams<Url>;
-  queryParams: Url extends `${infer _}?${infer Q}`
-    ? QueryParams<Q> & Record<string, string | undefined>
-    : Record<string, string> | undefined;
+export type Request<
+  A
+> = {
   body?: Body;
-  url: Url;
+  url: string;
   method: HttpMethod;
   headers: { [k: string]: string | string[] | undefined };
-};
+} & A;
 
 export type Headers = {
   [header: string]: string;
@@ -76,10 +73,12 @@ export type Response<B = Body> = {
   body: B;
 };
 
-export type Handler<Url extends string, A extends {} = {}, B = Body> = (
-  req: Request<Url> & A
-) => Promise<Response<B>> | Response<B>;
+export type Handler<A, B> = (
+  req: A
+) => Promise<B> | B;
+
+export type HttpHandler<Url extends string, B> = Handler<Request<RequestParams<Url>>, Response<B>>;
 
 export type Prettify<A> = {
   [K in keyof A]: A[K];
-} & {}
+} & {};
