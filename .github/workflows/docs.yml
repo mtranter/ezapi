@@ -11,6 +11,8 @@ on:
 
 jobs:
   deploy:
+    permissions:
+      contents: write
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     defaults:
