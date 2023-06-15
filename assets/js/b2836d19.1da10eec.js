@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[851],{6967:e=>{e.exports=JSON.parse('{"title":"Backends","slug":"/category/backends","permalink":"/ezapi/category/backends","navigation":{"previous":{"title":"Testing","permalink":"/ezapi/router/testing-ez-api-routing"},"next":{"title":"Basics","permalink":"/ezapi/backends/ez-api-backends"}}}')}}]);
