@@ -3,8 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "examples/**",
+    "packages/*",
+    "packages/middleware/*",
+    "packages/backends/aws-http-gw-backend",
+    "packages/backends/aws-rest-gw-backend",
+    "packages/backends/express-backend"
   ],
   "repository": {
     "type": "git",
@@ -20,7 +24,7 @@
     "ci-build": "lerna run build && lerna run test"
   },
   "devDependencies": {
-    "eslint-config-custom": "*",
+    "eslint-config-custom": "file:./packages/eslint-config-custom",
     "lerna": "^6.4.1",
     "prettier": "latest"
   },
@@ -29,6 +33,5 @@
   },
   "dependencies": {
     "tsup": "^6.5.0"
-  },
-  "packageManager": "pnpm@6.11.0"
+  }
 }

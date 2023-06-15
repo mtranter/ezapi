@@ -1,0 +1,33 @@
+{
+  "name": "@ezapi/jwt-middleware",
+  "version": "0.0.0",
+  "description": "JWT Middleware for EZApi",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "file:../eslint-config-custom",
+    "tsconfig": "file:../tsconfig",
+    "typescript": "^4.5.2",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "dependencies": {
+    "@ezapi/router-core": "file:../../router-core",
+    "@types/jsonwebtoken": "^9.0.2"
+  },
+  "peerDependencies": {
+    "jsonwebtoken": "^9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtranter/ezapi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mtranter/ezapi/issues"
+  },
+  "homepage": "https://github.com/mtranter/ezapi#readme"
+}

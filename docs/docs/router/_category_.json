@@ -1,0 +1,8 @@
+{
+  "label": "The Router",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "All about the EZ Api router"
+  }
+}
