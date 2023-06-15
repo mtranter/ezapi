@@ -16,7 +16,7 @@ jobs:
       - run: npm install
       - run: npm run ci-build
       - run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - run: npm run lerna version --yes --no-git-tag-version --no-push $RELEASE_VERSION
+      - run: lerna version --yes --no-git-tag-version --no-push $RELEASE_VERSION
       # - run: |
       #     git config --global user.email "bot@ezapi.com"
       #     git config --global user.name "EZAPI Bot"
