@@ -1,0 +1,25 @@
+{
+  "name": "@ezapi/vanilla-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint ./src/*.ts*",
+    "dev:vanilla": "ts-node ./src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtranter/ezapi.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mtranter/ezapi/issues"
+  },
+  "homepage": "https://github.com/mtranter/ezapi#readme",
+  "dependencies": {
+    "@ezapi/router-core": "file:../../packages/router-core",
+    "@ezapi/vanilla-backend": "file:../../packages/backends/vanilla"
+  }
+}

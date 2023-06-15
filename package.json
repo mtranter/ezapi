@@ -8,7 +8,8 @@
     "packages/middleware/*",
     "packages/backends/aws-http-gw-backend",
     "packages/backends/aws-rest-gw-backend",
-    "packages/backends/express-backend"
+    "packages/backends/express-backend",
+    "packages/backends/vanilla-backend"
   ],
   "repository": {
     "type": "git",

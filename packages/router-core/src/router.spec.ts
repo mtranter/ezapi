@@ -7,6 +7,7 @@ import {
   HandlersOf,
   HttpMethod,
   RouteBuilder,
+  Router,
 } from "./router-builder";
 import { Request, Response, Body, RequestParams } from "./types";
 
@@ -191,23 +192,36 @@ describe("Router", () => {
   });
   describe("API Builder", () => {
     it("should route a simple query string", async () => {
-      const routeDefinitions2 = RouteBuilder.route(
+      const peopleRoutes = RouteBuilder.route(
         "searchPeople",
         "GET",
-        "/{id}?{name}&{age:int}"
+        "/?{name}&{age:int}"
       );
-      const router = routeDefinitions2.build({
+      const peopleRouter = peopleRoutes.build({
         searchPeople: async (req) => {
           const nameQuery: string = req.queryParams.name;
           const ageQuery: number = req.queryParams.age;
           return Ok(JSON.stringify({ nameQuery, ageQuery }));
         },
       });
-      const api = ApiBuilder.build({
-        "/people": router,
+      const carRoutes = RouteBuilder.route(
+        "searchCars",
+        "GET",
+        "/?{make}&{model}"
+      );
+      const carRouter = carRoutes.build({
+        searchCars: async (req) => {
+          const makeQuery = req.queryParams.make;
+          const modelQuery = req.queryParams.model;
+          return Ok(JSON.stringify({ makeQuery, modelQuery }));
+        },
       });
-      const response = await api.run({
-        url: "/people/1",
+      const api: Router = ApiBuilder.build({
+        "/people": peopleRouter,
+        "/cars": carRouter
+      });
+      const peopleResponse = await api.run({
+        url: "/people",
         method: "GET",
         headers: {},
         query: {
@@ -215,11 +229,26 @@ describe("Router", () => {
           age: "30",
         },
       });
-      expect(response).toBeDefined();
-      expect(response?.statusCode).toBe(200);
-      const body = JSON.parse(response!.body.toString());
-      expect(body.nameQuery).toBe("fred");
-      expect(body.ageQuery).toBe(30);
+      expect(peopleResponse).toBeDefined();
+      expect(peopleResponse?.statusCode).toBe(200);
+      const peopleBody = JSON.parse(peopleResponse!.body.toString());
+      expect(peopleBody.nameQuery).toBe("fred");
+      expect(peopleBody.ageQuery).toBe(30);
+
+      const carResponse = await api.run({
+        url: "/cars",
+        method: "GET",
+        headers: {},
+        query: {
+          make: "GoGoMobile",
+          model: "Dart",
+        },
+      });
+      expect(carResponse).toBeDefined();
+      expect(carResponse?.statusCode).toBe(200);
+      const carBody = JSON.parse(carResponse!.body.toString());
+      expect(carBody.makeQuery).toBe("GoGoMobile");
+      expect(carBody.modelQuery).toBe("Dart");
     });
     it("should respect middleware", async () => {
       const routeDefinitions2 = RouteBuilder.route(
