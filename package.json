@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "eslint-config-custom": "file:./packages/eslint-config-custom",
-    "lerna": "^6.4.1",
+    "lerna": "^6.6.1",
     "prettier": "latest"
   },
   "engines": {
