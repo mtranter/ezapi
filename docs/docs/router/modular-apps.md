@@ -8,7 +8,9 @@ slug: ez-api-modular-routing
 
 It can be cumbersome to use a single Router/RouterBuilder instance for large web apps.
 
-For this use cases, the `ApiBuilder` object is supplied. It's API is quite simple.
+Use the `ApiBuilder` object to modularise your API Routes.
+
+The below example shows two router setups, 
 
 ```typescript
 // people.ts

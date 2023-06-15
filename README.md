@@ -34,15 +34,16 @@ import express from "express";
 import bodyParser from "body-parser";
 import { RouteBuilder, Ok } from "@ezapi/router-core";
 
-const api = RouteBuilder
-  .route("pingPong", "GET", "/ping")
+const api = RouteBuilder.route("pingPong", "GET", "/ping")
   .route("helloWorld", "GET", "/hello-{name}")
   .build({
-    pingPong: req => Ok('PONG!'),
-    helloWorld: req => Ok(`Hello, ${req.pathParams.name}!`) // <- strongly typed pathParams
-  })
+    pingPong: (req) => Ok("PONG!"),
+    helloWorld: (req) => Ok(`Hello, ${req.pathParams.name}!`), // <- strongly typed pathParams
+  });
 
-const expressMW = expressMiddleware(api, true);
+const expressMW = expressMiddleware(api, {
+  return404IfRouteNotFound: true,
+});
 
 const app = express();
 // EZ API requires the raw body parser
@@ -52,5 +53,4 @@ app.use(expressMW);
 app.listen(5051, () => {
   console.log("listening on 5051");
 });
-
 ```

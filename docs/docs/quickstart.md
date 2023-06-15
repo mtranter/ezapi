@@ -28,7 +28,9 @@ const api = RouteBuilder
     helloWorld: req => Ok(`Hello, ${req.pathParams.name}!`) // <- strongly typed pathParams
   })
 
-const expressMW = expressMiddleware(api, true);
+const expressMW = expressMiddleware(api, {
+  return404IfRouteNotFound: true,
+});
 
 const app = express();
 // EZ API requires the raw body parser

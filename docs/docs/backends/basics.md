@@ -19,7 +19,9 @@ import express from "express";
 import bodyParser from "body-parser";
 import { routes } from "./routes";
 
-const mw = expressMiddleware(routes, true);
+const mw = expressMiddleware(routes, {
+  return404IfRouteNotFound: true,
+});
 
 const app = express();
 

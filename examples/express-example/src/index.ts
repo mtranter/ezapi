@@ -4,7 +4,9 @@ import bodyParser from "body-parser";
 import { PeopleService } from "./people-service";
 import { routes } from "./routes";
 
-const mw = expressMiddleware(routes(PeopleService()), true);
+const mw = expressMiddleware(routes(PeopleService()), {
+  return404IfRouteNotFound: true,
+});
 
 const app = express();
 app.use(bodyParser.raw({ inflate: true, limit: "100kb", type: "*/*" }));

@@ -9,7 +9,7 @@ import styles from './index.module.css';
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
-  return (
+  return (<>
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
@@ -23,12 +23,15 @@ function HomepageHeader() {
         </div>
       </div>
     </header>
-  );
+  </>);
 }
 
 export default function Home() {
   const {siteConfig} = useDocusaurusContext();
-  return (
+  const [showAlert, setShowAlert] = React.useState(true);
+  return (<>
+    {showAlert && <div className={styles.headerAlert}>This documentation is for EZ API version {siteConfig.customFields.docsSupportVersion}<span className={styles.headerAlertClose} onClick={() => setShowAlert(false)}>X</span></div>}
+    
     <Layout
       title={siteConfig.title}
       description="A typesafe, composable Typescript HTTP API DSL <head />">
@@ -37,5 +40,6 @@ export default function Home() {
         <HomepageFeatures />
       </main>
     </Layout>
+    </>
   );
 }

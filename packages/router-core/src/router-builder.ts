@@ -132,31 +132,43 @@ const stripForwardSlash = (prefix: string): string => {
   }
   return prefix;
 };
+
+type SlashPrefix<S> = S extends `/${infer _}` ? S : never;
+type Routes<T> = {
+  [K in keyof T]: K extends SlashPrefix<K> ? T[K] : never;
+};
+
 export const ApiBuilder = {
-  build: (routes: { [prefix: string]: Router }): Router => {
-    const definitions = Object.keys(routes).flatMap((prefix) => {
-      const router = routes[prefix];
-      return router.definitions().map((def) => ({
-        ...def,
-        name: `${stripForwardSlash(prefix)}.${def.name}`,
-        pathPattern: `${prefix}${def.pathPattern}`,
-      }));
-    });
-    const handlers = Object.keys(routes).reduce((acc, prefix) => {
-      const router = routes[prefix];
-      const handlers = Object.keys(router.handlers()).reduce((acc, name) => {
-        const handler = router.handlers()[name];
-        const prefixedName = `${stripForwardSlash(prefix)}.${name}`;
+  build: <T>(routes: Routes<T>): Router => {
+    const {handlers, definitions} = Object.keys(routes).reduce(
+      (acc, prefix) => {
+        const router = (routes as Record<string, Router>)[prefix];
+        const handlers = Object.keys(router.handlers()).reduce((acc, name) => {
+          const handler = router.handlers()[name];
+          const prefixedName = `${stripForwardSlash(prefix)}.${name}`;
+          return {
+            ...acc,
+            [prefixedName]: handler,
+          };
+        }, {});
+        const definitions = router.definitions().map((def) => ({
+          ...def,
+          name: `${stripForwardSlash(prefix)}.${def.name}`,
+          pathPattern: `${prefix}${def.pathPattern}`,
+        }));
         return {
-          ...acc,
-          [prefixedName]: handler,
+          definitions: [...acc.definitions, ...definitions],
+          handlers: {
+            ...acc.handlers,
+            ...handlers,
+          },
         };
-      }, {});
-      return {
-        ...acc,
-        ...handlers,
-      };
-    }, {});
+      },
+      {
+        definitions: [] as RouteDefinition[],
+        handlers: {},
+      }
+    );
     return Router(definitions, handlers);
   },
 };

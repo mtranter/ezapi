@@ -7,8 +7,11 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'EZApi',
-  tagline: 'Fun HTTP API builder for Typescript',
+  tagline: 'Typesafe, pluggable HTTP API builder for Typescript',
   favicon: 'img/favicon.ico',
+  customFields: {
+    docsSupportVersion: "2"
+  },
 
   // Set the production url of your site here
   url: 'https://mtranter.github.io',
