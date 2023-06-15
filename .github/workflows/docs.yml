@@ -2,6 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
+    branches:
+      - main
     tags:
         - 'v*.*.**'
     # Review gh actions docs if you want to further define triggers, paths, etc
@@ -25,7 +27,7 @@ jobs:
         run: npm ci
         working-directory: ./docs
       - name: Build website
-        run: npm build
+        run: npm run build
         working-directory: ./docs
 
       # Popular action to deploy to GitHub Pages:
