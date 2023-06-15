@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ### Install
 
-`npm install -S @ezapi/router-core @ezapi/json-middleware @ezapi/express-backend`
+`npm install -S @ezapi/router-core @ezapi/express-backend`
 
 ### DSL
 
@@ -40,5 +40,3 @@ app.listen(5051, () => {
 });
 
 ```
-
-### 

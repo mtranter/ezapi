@@ -14,6 +14,7 @@ A basic route definition might look like this:
 
 ```typescript
 import { RouteBuilder, Ok } from "@ezapi/router-core";
+
 const routeDefinitions = RouteBuilder.route("pingPong", "GET", "/ping");
 ```
 
