@@ -8,7 +8,7 @@ const FeatureList = [
     Svg: require('@site/static/img/easy.svg').default,
     description: (
       <>
-        Designed with Developer Experience at front of mind. All fancy type shenanigans are hidden away, wllowing you to focus on app logic.
+        Designed with Developer Experience at front of mind. All fancy type shenanigans are hidden away, allowing you to focus on app logic.
       </>
     ),
   },
