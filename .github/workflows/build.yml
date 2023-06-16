@@ -11,5 +11,6 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npx lerna init
+      - run: npm install -g pnpm
       - run: pnpm install
       - run: pnpm run ci-build
