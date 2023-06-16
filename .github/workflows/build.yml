@@ -5,12 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      # Setup .npmrc file to publish to npm
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.2
       - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npx lerna init
-      - run: npm install -g pnpm
       - run: pnpm install
       - run: pnpm run ci-build
