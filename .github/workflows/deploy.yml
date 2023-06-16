@@ -23,6 +23,6 @@ jobs:
       #     git config --global user.email "bot@ezapi.com"
       #     git config --global user.name "EZAPI Bot"
       #     git commit -am "Bump"
-      - run: pnpm publish -r --access public
+      - run: pnpm publish -r --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
