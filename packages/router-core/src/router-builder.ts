@@ -59,7 +59,7 @@ export type RouteBuilder<A, R1 = Body, Handlers = {}> = {
   build: (handers: Handlers) => Router;
   withMiddleware: <B, R2>(
     m: Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
-  ) => RouteBuilder<Prettify<A & B>, R2>;
+  ) => RouteBuilder<Prettify<A & B>, R2, Handlers>;
   route: <N extends string, Url extends string, B = {}, R2 = R1>(
     name: N,
     method: HttpMethod,
