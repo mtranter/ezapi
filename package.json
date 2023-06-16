@@ -2,15 +2,6 @@
   "name": "ezapi",
   "version": "0.0.0",
   "private": true,
-  "workspaces": [
-    "examples/**",
-    "packages/*",
-    "packages/middleware/*",
-    "packages/backends/aws-http-gw-backend",
-    "packages/backends/aws-rest-gw-backend",
-    "packages/backends/express-backend",
-    "packages/backends/vanilla-backend"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/mtranter/ezapi.git"
