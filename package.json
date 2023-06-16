@@ -23,7 +23,6 @@
   "engines": {
     "node": ">=14.0.0",
     "pnpm": ">=5.0.0"
-    
   },
   "dependencies": {
     "tsup": "^6.5.0"
