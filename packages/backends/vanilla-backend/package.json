@@ -21,5 +21,11 @@
   "homepage": "https://github.com/mtranter/ezapi#readme",
   "dependencies": {
     "@ezapi/router-core": "workspace:^"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "workspace:^",
+    "tsconfig": "workspace:^",
+    "typescript": "^4.5.2"
   }
 }

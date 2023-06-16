@@ -17,8 +17,12 @@
   },
   "devDependencies": {
     "eslint-config-custom": "workspace:^",
-    "lerna": "^6.6.1",
-    "prettier": "latest"
+    "lerna": "^7.0.2",
+    "prettier": "latest",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.3",
+    "@types/jest": "^29.5.2",
+    "@types/node": "^20.3.1"
   },
   "engines": {
     "node": ">=14.0.0",
