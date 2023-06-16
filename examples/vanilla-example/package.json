@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/mtranter/ezapi#readme",
   "dependencies": {
-    "@ezapi/router-core": "file:../../packages/router-core",
-    "@ezapi/vanilla-backend": "file:../../packages/backends/vanilla"
+    "@ezapi/router-core": "workspace:^",
+    "@ezapi/vanilla-backend": "workspace:^"
   }
 }

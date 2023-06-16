@@ -10,13 +10,13 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^7.32.0",
-    "eslint-config-custom": "file:../eslint-config-custom",
-    "tsconfig": "file:../tsconfig",
+    "eslint-config-custom": "workspace:^",
+    "tsconfig": "workspace:^",
     "typescript": "^4.5.2",
     "jsonwebtoken": "^9.0.0"
   },
   "dependencies": {
-    "@ezapi/router-core": "file:../../router-core",
+    "@ezapi/router-core": "workspace:^",
     "@types/jsonwebtoken": "^9.0.2"
   },
   "peerDependencies": {

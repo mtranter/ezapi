@@ -17,10 +17,10 @@
   "devDependencies": {
     "@types/jest": "^29.2.5",
     "eslint": "^7.32.0",
-    "eslint-config-custom": "file:../eslint-config-custom",
+    "eslint-config-custom": "workspace:^",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",
-    "tsconfig": "file:../tsconfig",
+    "tsconfig": "workspace:^",
     "typescript": "^4.5.2"
   },
   "dependencies": {

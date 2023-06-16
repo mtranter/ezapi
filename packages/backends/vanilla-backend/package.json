@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/mtranter/ezapi#readme",
   "dependencies": {
-    "@ezapi/router-core": "file:../../router-core"
+    "@ezapi/router-core": "workspace:^"
   }
 }

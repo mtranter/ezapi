@@ -25,12 +25,14 @@
     "ci-build": "lerna run build && lerna run test"
   },
   "devDependencies": {
-    "eslint-config-custom": "file:./packages/eslint-config-custom",
+    "eslint-config-custom": "workspace:^",
     "lerna": "^6.6.1",
     "prettier": "latest"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=14.0.0",
+    "pnpm": ">=5.0.0"
+    
   },
   "dependencies": {
     "tsup": "^6.5.0"
