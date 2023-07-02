@@ -9,7 +9,7 @@ title: Basics
 
 EZApi is simply a routing DSL. It is designed to be plugable by any web backend.
 
-EZApi currently ships with express, AWS Rest API GW and AWS HTTP API GW backends.
+EZApi currently ships with express, NextJS, AWS Rest API GW and AWS HTTP API GW backends.
 
 #### Express Backend
 
