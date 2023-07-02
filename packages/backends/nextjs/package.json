@@ -1,0 +1,39 @@
+{
+  "name": "@ezapi/nextjs-backend",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtranter/ezapi.git"
+  },
+  "homepage": "https://github.com/mtranter/ezapi/blob/main/README.md",
+  "scripts": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "lint": "eslint *.ts*",
+    "build": "tsup ./src/index.ts --format cjs --dts"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/node": "^18.7.23",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "workspace:^",
+    "next": "^13.0.0",  
+    "tsconfig": "workspace:^",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "@ezapi/router-core": "workspace:^"
+  },
+  "peerDependencies": {
+    "express": "^4.18.2",
+    "next": "^13.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/mtranter/ezapi/issues"
+  },
+  "author": "",
+  "description": ""
+}
