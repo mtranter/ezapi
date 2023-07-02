@@ -32,10 +32,11 @@ export const NextJsMiddleware =
     const body = await req.blob().then(async (blob) => {
       return Buffer.from(await blob.arrayBuffer());
     });
+    console.log(JSON.stringify(req.nextUrl))
     const response = await router
       .run({
         method: req.method as HttpMethod,
-        url: req.url,
+        url: req.nextUrl.pathname,
         query: queryStringToQueryObject(req.url.split("?")[1] ?? ""),
         headers,
         body,
