@@ -39,6 +39,27 @@ describe("Router", () => {
       expect(response?.statusCode).toBe(200);
       expect(response?.body).toBe("OK");
     });
+
+    it("should call handlers - case insensitve", async () => {
+      let didCall = false;
+      const api = routeDefinitions.build({
+        pingPong: async (req) => {
+          didCall = true;
+          return Ok("OK");
+        },
+      });
+      const response = await api.run({
+        url: "/PING",
+        method: "GET",
+        headers: {},
+        query: {},
+      });
+
+      expect(didCall).toBe(true);
+      expect(response?.statusCode).toBe(200);
+      expect(response?.body).toBe("OK");
+    });
+
     it("should respect middleware", async () => {
       let didCall = false;
       const api = RouteBuilder.route(
@@ -116,6 +137,48 @@ describe("Router", () => {
       const request = JSON.parse(response!.body.toString()) as any;
       expect(request.url).toBe("/users/1");
       expect(request.pathParams.id).toBe("1");
+    });
+    it("should route a simple literal path over a parameterized path", async () => {
+      const routeDefinitions = RouteBuilder.route(
+        "allProducts",
+        "GET",
+        "/products/all"
+      )
+        .route("aProduct", "GET", "/products/{id}")
+        .build({
+          allProducts: () => Ok("All Products"),
+          aProduct: () => Ok("A Product"),
+        });
+      const response = await routeDefinitions.run({
+        url: "/products/all",
+        method: "GET",
+        headers: {},
+        query: {},
+      });
+      expect(response).toBeTruthy();
+      expect(response?.statusCode).toBe(200);
+      expect(response?.body).toBe("All Products");
+    });
+    it("should route a HTTP Method match over an ANY match", async () => {
+      const routeDefinitions = RouteBuilder.route(
+        "getProducts",
+        "GET",
+        "/products/{id}"
+      )
+        .route("anyProducts", "ANY", "/products/{id}")
+        .build({
+          getProducts: () => Ok("getProducts"),
+          anyProducts: () => Ok("anyProducts"),
+        });
+      const response = await routeDefinitions.run({
+        url: "/products/1",
+        method: "GET",
+        headers: {},
+        query: {},
+      });
+      expect(response).toBeTruthy();
+      expect(response?.statusCode).toBe(200);
+      expect(response?.body).toBe("getProducts");
     });
     it("should route a simple path with a single typed parameter", async () => {
       const response = await makeRequest(
@@ -218,7 +281,7 @@ describe("Router", () => {
       });
       const api: Router = ApiBuilder.build({
         "/people": peopleRouter,
-        "/cars": carRouter
+        "/cars": carRouter,
       });
       const peopleResponse = await api.run({
         url: "/people",

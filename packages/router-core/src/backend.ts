@@ -13,7 +13,8 @@ const pathPatternToRegex = (pattern: string) =>
       pattern
         .replace(urlRegex, "(?<$2>[^\\$4]+)$4")
         .replace("[^\\]", pattern.endsWith("+}") ? "[^\\b]" : "[^\\b/]") +
-      "$"
+      "$",
+    "i"
   );
 
 const removeTrailingSlash = (s: string) =>
@@ -43,6 +44,9 @@ export const BackendUtils = {
       const urlParser = BackendUtils.urlParser();
       const requestAndDefinition = definitions.reduce(
         (p, def) => {
+          if (p.isUrlExactMatch) {
+            return p;
+          }
           if (!(def.method == "ANY" || def.method == method.toUpperCase())) {
             return p;
           }
@@ -61,7 +65,10 @@ export const BackendUtils = {
           if (isQsError(parsedQuery)) {
             return p;
           }
-          if (sizeOf(pathParams.groups) >= sizeOf(p[0]?.pathParams)) {
+          if (sizeOf(pathParams.groups) >= sizeOf(p.request?.pathParams)) {
+            if (p.isMethodExactMatch && def.method !== method.toUpperCase()) {
+              return p;
+            }
             const retval: Request<RequestParams<string>> = {
               method: method.toUpperCase() as HttpMethod,
               // eslint-disable-next-line @typescript-eslint/ban-types
@@ -74,20 +81,25 @@ export const BackendUtils = {
                   : undefined,
               url,
             };
-            return [retval, def] as [
-              Request<RequestParams<string>> | undefined,
-              RouteDefinition | undefined
-            ];
+            return {
+              request: retval,
+              routeDef: def,
+              isUrlExactMatch:
+                def.pathPattern.toLowerCase() === url.toLowerCase(),
+              isMethodExactMatch: def.method === method.toUpperCase(),
+            };
           }
           return p;
         },
-        [undefined, undefined] as [
-          Request<RequestParams<string>> | undefined,
-          RouteDefinition | undefined
-        ]
+        { isUrlExactMatch: false, isMethodExactMatch: false } as {
+          isUrlExactMatch: boolean;
+          isMethodExactMatch: boolean;
+          request: Request<RequestParams<string>> | undefined;
+          routeDef: RouteDefinition | undefined;
+        }
       );
       if (requestAndDefinition) {
-        const handlerName = requestAndDefinition[1]?.name;
+        const handlerName = requestAndDefinition.routeDef?.name;
         if (!handlerName) {
           return;
         }
@@ -99,11 +111,11 @@ export const BackendUtils = {
           };
         }
 
-        const middleware = requestAndDefinition[1]?.middleware;
+        const middleware = requestAndDefinition.routeDef?.middleware;
         const wrappedHandler = middleware ? middleware(handler) : handler;
         const response = await wrappedHandler(
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          requestAndDefinition[0]!
+          requestAndDefinition.request!
         );
         return response;
       } else {
@@ -124,7 +136,7 @@ export const BackendUtils = {
           ? { isMatch: false, groups: [] }
           : Object.keys(groups || {}).reduce(
               (prev, k) => {
-                const paramRegex = new RegExp(`\\{${k}\\+?(:(\\w+))?\\}`);
+                const paramRegex = new RegExp(`\\{${k}\\+?(:(\\w+))?\\}`, "i");
                 const match = paramRegex.exec(pathPattern);
                 if (match) {
                   if (match[2]) {
