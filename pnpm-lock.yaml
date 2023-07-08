@@ -273,6 +273,28 @@ importers:
         specifier: ^4.8.4
         version: 4.9.5
 
+  packages/middleware/cors:
+    dependencies:
+      mime-match:
+        specifier: ^1.0.2
+        version: 1.0.2
+    devDependencies:
+      '@ezapi/router-core':
+        specifier: workspace:^
+        version: link:../../router-core
+      eslint:
+        specifier: ^7.32.0
+        version: 7.32.0
+      eslint-config-custom:
+        specifier: workspace:^
+        version: link:../../eslint-config-custom
+      tsconfig:
+        specifier: workspace:^
+        version: link:../../tsconfig
+      typescript:
+        specifier: ^4.5.2
+        version: 4.9.5
+
   packages/middleware/json:
     dependencies:
       mime-match:
