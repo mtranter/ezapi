@@ -2,7 +2,7 @@ import { Forbidden, HttpMiddleware, Request } from "@ezapi/router-core";
 
 type AllowedOriginType = string[] | string | RegExp;
 export type CorsConfig = {
-  allowedOrigins: string[] | string | RegExp;
+  allowedOrigins: AllowedOriginType;
   allowedMethods: string[];
   allowedHeaders: string[];
   exposedHeaders: string[];
@@ -27,7 +27,9 @@ const configureOriginHeader = (
     }
   }
   if (Array.isArray(originConfig)) {
-    const isMatch = originConfig.includes(origin);
+    const isMatch = originConfig.some(
+      (oc) => oc === "*" || origin.toLowerCase() === oc.toLowerCase()
+    );
     return isMatch
       ? {
           "access-control-allow-origin": origin,
