@@ -56,10 +56,36 @@ export type HandlersOf<R> = R extends RouteBuilder<infer _, infer __, infer H>
   : never;
 
 export type RouteBuilder<A, R1 = Body, Handlers = {}> = {
+  /**
+   * Builds a router from the route definitions.
+   * @param handlers - The handlers to build the router from.
+   * @returns A @see Router.
+   * @example
+   * const router = RouteBuilder
+   * .route("create", "POST", "/")
+   * .build({
+   *  create: (req) => {
+   *    const user = req.body;
+   *    return Ok(JSON.stringify(user));
+   *  },
+   * });
+   **/
   build: (handers: Handlers) => Router;
   withMiddleware: <B, R2>(
     m: Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
   ) => RouteBuilder<Prettify<A & B>, R2, Handlers>;
+  /**
+   * Adds a route to the route definitions.
+   * @param name - The name of the route.
+   * @param method - The HTTP method of the route.
+   * @param url - The URL of the route.
+   * @param middleware - The middleware to run before the handler.
+   * @returns A @see RouteBuilder.
+   * @example
+   * const router = RouteBuilder
+   * .route("createUser", "POST", "/", ZodMiddleware(UserSchema))
+   * .route("getUser", "GET", "/{id}")
+   **/
   route: <N extends string, Url extends string, B = {}, R2 = R1>(
     name: N,
     method: HttpMethod,
@@ -139,8 +165,25 @@ type Routes<T> = {
 };
 
 export const ApiBuilder = {
+  /**
+   * Builds a router from a set of routes.
+   * @param routes - The routes to build the router from.
+   * @returns A @see Router.
+   * @example
+   * const userRoutes = RouteBuilder
+   * .route("create", "POST", "/")
+   * .build({
+   *  create: (req) => {
+   *    const user = req.body;
+   *    return Ok(JSON.stringify(user));
+   *  },
+   * });
+   * const router = ApiBuilder.build({
+   *  "/users": userRoutes,
+   * });
+   */
   build: <T>(routes: Routes<T>): Router => {
-    const {handlers, definitions} = Object.keys(routes).reduce(
+    const { handlers, definitions } = Object.keys(routes).reduce(
       (acc, prefix) => {
         const router = (routes as Record<string, Router>)[prefix];
         const handlers = Object.keys(router.handlers()).reduce((acc, name) => {

@@ -57,7 +57,10 @@ export const BackendUtils = {
           if (!pathParams.isMatch) {
             return p;
           }
-          const queryPattern = def.pathPattern.split("?")[1];
+          const queryPattern =
+            def.pathPattern.indexOf("?") > -1
+              ? def.pathPattern.substring(def.pathPattern.indexOf("?") + 1)
+              : undefined;
           const parsedQuery = queryPattern
             ? parseQuery(queryPattern, query)
             : query;

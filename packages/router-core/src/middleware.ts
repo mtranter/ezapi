@@ -1,7 +1,7 @@
 import { Body, Handler, Prettify, Request, Response } from "./types";
 
 type _Middleware<A, B, R1, R2> = <AA extends A = A>(
-  handler: Handler<AA & B, R2>
+  handler: Handler<Prettify<AA & B>, R2>
 ) => Handler<AA, R1>;
 
 export type Middleware<A, B, R1 = Body, R2 = R1> = _Middleware<A, B, R1, R2> &
@@ -20,7 +20,7 @@ const compose =
   <A, B, C, R1 = Body, R2 = R1, R3 = R2>(
     m1: _Middleware<A, B, R1, R2>,
     m2: _Middleware<B, C, R2, R3>
-  ): _Middleware<A, Prettify<B & C>, R1, R3> =>
+  ): _Middleware<A, B & C, R1, R3> =>
   (r) => {
     const r2 = m2(r as Handler<C, R3>);
     return m1(r2 as Handler<B, R2>);
