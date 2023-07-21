@@ -60,7 +60,9 @@ export type QueryParams<
 export type Body = string | Buffer;
 export type RequestParams<S extends string> = {
   pathParams: PathParams<WithoutQueryString<S>>;
-  queryParams: QueryParams<ExtractQueryString<S>>;
+  queryParams: QueryParams<ExtractQueryString<S>> & {
+    readonly [k: string]: string | undefined;
+  };
 };
 
 export type Request<A> = {
@@ -103,12 +105,12 @@ export type ApiHandler = ({
   query: Record<string, string | undefined>;
 }) => Promise<Response | undefined>;
 
-const req: RequestParams<"/people/{id}?{name}&{age:int}"> = {
-  pathParams: {
-    id: "1",
-  },
-  queryParams: {
-    name: "John",
-    age: 12,
-  },
-};
+// const dummyReq: RequestParams<"/people/{id}?{name}&{age:int}"> = {
+//   pathParams: {
+//     id: "1",
+//   },
+//   queryParams: {
+//     name: "John",
+//     age: 12,
+//   },
+// };

@@ -252,6 +252,37 @@ describe("Router", () => {
       expect(body.nameQuery).toBe("fred");
       expect(body.ageQuery).toBe(30);
     });
+    it("should pass query strings that have not been defined", async () => {
+      const routeDefinitions2 = RouteBuilder.route(
+        "searchPeople",
+        "GET",
+        "/people/{id}?{name}&{age:int}"
+      );
+      const router = routeDefinitions2.build({
+        searchPeople: async (req) => {
+          const nameQuery: string = req.queryParams.name;
+          const ageQuery: number = req.queryParams.age;
+          const fooQuery: string | undefined = req.queryParams.foo;
+          return Ok(JSON.stringify({ nameQuery, ageQuery, fooQuery }));
+        },
+      });
+      const response = await router.run({
+        url: "/people/1",
+        method: "GET",
+        headers: {},
+        query: {
+          name: "fred",
+          age: "30",
+          foo: "bar",
+        },
+      });
+      expect(response).toBeDefined();
+      expect(response?.statusCode).toBe(200);
+      const body = JSON.parse(response!.body.toString());
+      expect(body.nameQuery).toBe("fred");
+      expect(body.ageQuery).toBe(30);
+      expect(body.fooQuery).toBe("bar");
+    });
   });
   describe("API Builder", () => {
     it("should route a simple query string", async () => {
