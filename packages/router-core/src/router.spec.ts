@@ -138,6 +138,18 @@ describe("Router", () => {
       expect(request.url).toBe("/users/1");
       expect(request.pathParams.id).toBe("1");
     });
+    it("should route a path with a single untyped parameter where the parameter contains forward slash", async () => {
+      const response = await makeRequest(
+        "getArticle",
+        "GET",
+        "/articles/{slug+}",
+        "/articles/user-1/ez-api-is-cool"
+      );
+      expect(response).toBeTruthy();
+      expect(response?.statusCode).toBe(200);
+      const request = JSON.parse(response!.body.toString()) as any;
+      expect(request.pathParams.slug).toBe("user-1/ez-api-is-cool");
+    });
     it("should route a simple literal path over a parameterized path", async () => {
       const routeDefinitions = RouteBuilder.route(
         "allProducts",
@@ -303,6 +315,7 @@ describe("Router", () => {
         "GET",
         "/?{make}&{model}"
       );
+      const carRoutes2 = RouteBuilder.route("getCar", "GET", "/{id}");
       const carRouter = carRoutes.build({
         searchCars: async (req) => {
           const makeQuery = req.queryParams.make;
@@ -310,9 +323,14 @@ describe("Router", () => {
           return Ok(JSON.stringify({ makeQuery, modelQuery }));
         },
       });
+      const carRouter2 = carRoutes2.build({
+        getCar: async (req) => {
+          return Ok(JSON.stringify({ drive: "Vroom!" }));
+        },
+      });
       const api: Router = ApiBuilder.build({
         "/people": peopleRouter,
-        "/cars": carRouter,
+        "/cars": [carRouter, carRouter2],
       });
       const peopleResponse = await api.run({
         url: "/people",
@@ -343,6 +361,17 @@ describe("Router", () => {
       const carBody = JSON.parse(carResponse!.body.toString());
       expect(carBody.makeQuery).toBe("GoGoMobile");
       expect(carBody.modelQuery).toBe("Dart");
+
+      const carResponse2 = await api.run({
+        url: "/cars/1",
+        method: "GET",
+        headers: {},
+        query: { },
+      });
+      expect(carResponse2).toBeDefined();
+      expect(carResponse2?.statusCode).toBe(200);
+      const carBody2 = JSON.parse(carResponse2!.body.toString());
+      expect(carBody2.drive).toBe("Vroom!");
     });
     it("should respect middleware", async () => {
       const routeDefinitions2 = RouteBuilder.route(

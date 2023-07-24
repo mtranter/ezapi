@@ -182,19 +182,22 @@ export const ApiBuilder = {
    *  "/users": userRoutes,
    * });
    */
-  build: <T>(routes: Routes<T>): Router => {
+  build: <T extends Record<string, Router | Router[]>>(routes: Routes<T>): Router => {
     const { handlers, definitions } = Object.keys(routes).reduce(
       (acc, prefix) => {
-        const router = (routes as Record<string, Router>)[prefix];
-        const handlers = Object.keys(router.handlers()).reduce((acc, name) => {
-          const handler = router.handlers()[name];
+        const routerOrRouters = (routes as Record<string, Router | Router[]>)[prefix];
+        const routers = Array.isArray(routerOrRouters) ? routerOrRouters : [routerOrRouters];
+        const allHandlers = routers.reduce((acc,r) => ({...acc, ...r.handlers()}), {} as Record<string, Handler<any, Response<any>>>)
+        const handlers = Object.keys(allHandlers).reduce((acc, name) => {
+          const handler = allHandlers[name];
           const prefixedName = `${stripForwardSlash(prefix)}.${name}`;
           return {
             ...acc,
             [prefixedName]: handler,
           };
         }, {});
-        const definitions = router.definitions().map((def) => ({
+        const allDefinitions = routers.flatMap((r) => r.definitions());
+        const definitions = allDefinitions.map((def) => ({
           ...def,
           name: `${stripForwardSlash(prefix)}.${def.name}`,
           pathPattern: `${prefix}${def.pathPattern}`,

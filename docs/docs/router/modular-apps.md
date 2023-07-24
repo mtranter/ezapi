@@ -45,3 +45,16 @@ const api: Router = ApiBuilder.build({
   "/cars": carRouter,
 });
 ```
+
+
+The API builder takes a Record of "/" prefixes to Router instances or router arrays.
+
+e.g.
+```typescript
+import { peopleRouter } from './people.ts'
+import { carRouter } from './cars.ts'
+import { moreCarRoutes } from './more-cars.ts'
+const api: Router = ApiBuilder.build({
+  "/people": peopleRouter,
+  "/cars": [carRouter, moreCarRoutes],
+});
