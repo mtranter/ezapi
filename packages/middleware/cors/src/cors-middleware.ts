@@ -1,13 +1,13 @@
-import { Forbidden, HttpMiddleware, Request } from "@ezapi/router-core";
+import { HttpMiddleware } from "@ezapi/router-core";
 
 type AllowedOriginType = string[] | string | RegExp;
 export type CorsConfig = {
-  allowedOrigins: AllowedOriginType;
-  allowedMethods: string[];
-  allowedHeaders: string[];
-  exposedHeaders: string[];
-  allowCredentials: boolean;
-  maxAge: number;
+  allowedOrigins?: AllowedOriginType
+  allowedMethods?: string[];
+  allowedHeaders?: string[];
+  exposedHeaders?: string[];
+  allowCredentials?: boolean;
+  maxAge?: number;
 };
 
 const configureOriginHeader = (
@@ -53,7 +53,7 @@ const configureAllowedHeaders = (
   options: CorsConfig,
   reqHeaders: Record<string, string | string[] | undefined>
 ): Record<string, string> => {
-  let allowedHeaders: string[] = options.allowedHeaders;
+  let allowedHeaders = options.allowedHeaders || [];
   const headers: Record<string, string> = {};
 
   if (!allowedHeaders.length) {
@@ -84,19 +84,19 @@ export const CorsMiddleware = <A>(config: CorsConfig) =>
     const responseHeaders =
       req.method === "OPTIONS"
         ? {
-            ...configureOriginHeader(origin, config.allowedOrigins),
+            ...configureOriginHeader(origin, config.allowedOrigins || "*"),
             ...configureAllowedHeaders(config, req.headers),
-            "access-control-allow-methods": config.allowedMethods.join(","),
-            "access-control-expose-headers": config.exposedHeaders.join(","),
+            "access-control-allow-methods": config.allowedMethods?.join(",") || "*",
+            "access-control-expose-headers": config.exposedHeaders?.join(",") || "*",
             "access-control-allow-credentials":
-              config.allowCredentials.toString(),
-            "access-control-max-age": config.maxAge.toString(),
+              config.allowCredentials?.toString() || "false",
+            "access-control-max-age": config.maxAge?.toString() || "3600",
           }
         : {
-            ...configureOriginHeader(origin, config.allowedOrigins),
-            "access-control-expose-headers": config.exposedHeaders.join(","),
+            ...configureOriginHeader(origin, config.allowedOrigins || "*"),
+            "access-control-expose-headers": config.exposedHeaders?.join(",") || "*",
             "access-control-allow-credentials":
-              config.allowCredentials.toString(),
+              config.allowCredentials?.toString() || "false",
           };
     const resp = await handler(req);
     return {

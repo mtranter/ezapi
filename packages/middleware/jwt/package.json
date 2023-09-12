@@ -4,6 +4,7 @@
   "description": "JWT Middleware for EZApi",
   "main": "dist/index.js",
   "scripts": {
+    "build": "tsup ./src/index.ts --format cjs --dts",
     "test": "jest"
   },
   "author": "",
