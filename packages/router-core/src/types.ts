@@ -57,7 +57,7 @@ export type QueryParams<
     : Merge<Seed & UrlParam<AA>>
   : Seed;
 
-export type Body = string | Buffer;
+export type Body = string | Buffer | NodeJS.ReadableStream
 export type RequestParams<S extends string> = {
   pathParams: PathParams<WithoutQueryString<S>>;
   queryParams: QueryParams<ExtractQueryString<S>> & {
@@ -87,6 +87,7 @@ export type HttpHandler<Url extends string, B> = Handler<
   Request<RequestParams<Url>>,
   Response<B>
 >;
+
 
 export type Prettify<A> = {
   [K in keyof A]: A[K];

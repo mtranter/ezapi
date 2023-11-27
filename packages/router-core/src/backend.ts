@@ -17,6 +17,12 @@ const pathPatternToRegex = (pattern: string) =>
     "i"
   );
 
+const isReadableStream = (o: unknown): o is NodeJS.ReadableStream =>
+  typeof o === "object" &&
+  o !== null &&
+  "pipe" in o &&
+  typeof (o as NodeJS.ReadableStream).pipe === "function";
+
 const removeTrailingSlash = (s: string) =>
   s.endsWith("/") ? s.slice(0, s.length - 1) : s;
 
@@ -79,7 +85,9 @@ export const BackendUtils = {
               queryParams: parsedQuery as never,
               headers,
               body:
-                typeof body === "string" || body instanceof Buffer
+                typeof body === "string" ||
+                body instanceof Buffer ||
+                isReadableStream(body)
                   ? body
                   : undefined,
               url,

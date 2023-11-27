@@ -39,7 +39,14 @@ export const expressMiddleware = (
       Object.keys(response.headers ?? {}).forEach((h) =>
         res.set(h, (response.headers ?? {})[h])
       );
-      res.send(response.body);
+      if (
+        response.body instanceof Buffer ||
+        typeof response.body === "string"
+      ) {
+        res.send(response.body);
+      } else {
+        response.body?.pipe(res);
+      }
       return;
     }
     return cfg.return404IfRouteNotFound

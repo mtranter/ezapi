@@ -1,5 +1,26 @@
-import { HttpMethod, Router } from "@ezapi/router-core";
+import { HttpMethod, Router, Body } from "@ezapi/router-core";
 import { APIGatewayProxyHandler } from "aws-lambda";
+
+
+const readableStreamToString = (stream: NodeJS.ReadableStream): Promise<string> => {
+  const chunks: Uint8Array[] = [];
+  return new Promise((resolve, reject) => {
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+  });
+}
+const bodyToString = async (b: string | Buffer | NodeJS.ReadableStream): Promise<string> => {
+  if (typeof b === "string") {
+    return b;
+  }
+  if (Buffer.isBuffer(b)) {
+    return b.toString("utf8");
+  }
+  else {
+    return readableStreamToString(b);
+  }
+}
 
 export const restApiHandler = (
   router: Router | Promise<Router>,
@@ -18,7 +39,7 @@ export const restApiHandler = (
       return {
         statusCode: response.statusCode,
         headers: response.headers,
-        body: response.body.toString(),
+        body: response.body ? (await bodyToString(response.body)) : ""
       };
     }
     return {

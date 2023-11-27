@@ -3,6 +3,26 @@ import mimeMatch from "mime-match";
 
 const DEFAULT_MIME_TYPE = "application/json";
 
+const readableStreamToString = (stream: NodeJS.ReadableStream): Promise<string> => {
+  const chunks: Uint8Array[] = [];
+  return new Promise((resolve, reject) => {
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+  });
+}
+const bodyToString = async (b: string | Buffer | NodeJS.ReadableStream): Promise<string> => {
+  if (typeof b === "string") {
+    return b;
+  }
+  if (Buffer.isBuffer(b)) {
+    return b.toString("utf8");
+  }
+  else {
+    return readableStreamToString(b);
+  }
+}
+
 export const JsonParserMiddlerware = HttpMiddleware.of<
   {},
   { jsonBody: object },
@@ -18,8 +38,9 @@ export const JsonParserMiddlerware = HttpMiddleware.of<
   }
   let result: object = {};
   try {
+    const body = req.body ? (await bodyToString(req.body)) : undefined
     result =
-      req.body && req.body.length ? JSON.parse(req.body.toString()) : undefined;
+      body && body.length ? JSON.parse(body) : undefined;
   } catch (e) {
     console.log(e);
     return Promise.resolve({

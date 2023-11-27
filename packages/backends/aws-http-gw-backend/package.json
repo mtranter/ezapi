@@ -14,7 +14,7 @@
     "lint": "eslint *.ts*"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.119",
+    "@types/aws-lambda": "^8.10.124",
     "@types/node": "^18.7.23",
     "eslint": "^7.32.0",
     "eslint-config-custom": "workspace:^",

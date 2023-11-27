@@ -7,7 +7,7 @@ import {
   Prettify,
   Request,
   RequestParams,
-  ApiHandler,
+  ApiHandler
 } from "./types";
 
 type ReadonlyHttpMethods = "GET" | "OPTIONS" | "HEAD";

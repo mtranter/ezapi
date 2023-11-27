@@ -11,6 +11,27 @@ type NextJsMiddlewareConfig = {
   return404OnNotFound: boolean;
 };
 
+const readableStreamToString = (stream: NodeJS.ReadableStream): Promise<string> => {
+  const chunks: Uint8Array[] = [];
+  return new Promise((resolve, reject) => {
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+  });
+}
+
+const bodyToString = async (b: string | Buffer | NodeJS.ReadableStream): Promise<string> => {
+  if (typeof b === "string") {
+    return b;
+  }
+  if (Buffer.isBuffer(b)) {
+    return b.toString("utf8");
+  }
+  else {
+    return readableStreamToString(b);
+  }
+}
+
 const queryStringToQueryObject = (queryString: string) => {
   const queryObject: Record<string, string> = {};
   queryString
@@ -49,7 +70,8 @@ export const NextJsMiddleware =
         } as CoreResponse<Body>;
       });
     if (response) {
-      return new NextResponse(response.body, {
+      const body = await bodyToString(response.body)
+      return new NextResponse(body, {
         status: response.statusCode,
         headers: response.headers,
       });
