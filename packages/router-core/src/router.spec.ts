@@ -5,7 +5,6 @@ import { Ok } from "./responses";
 import {
   ApiBuilder,
   HandlersOf,
-  HttpClient,
   HttpMethod,
   RouteBuilder,
   Router,
