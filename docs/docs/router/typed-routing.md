@@ -56,7 +56,7 @@ These same code candy works for query strings
 import { RouteBuilder, Ok } from "@ezapi/router-core";
 const routeDefinitions = RouteBuilder.route("searchPeople", "GET", "/people?{name}&{age:int}")
   .build({
-    getPersonById: async (req) => {
+    searchPeople: async (req) => {
       const nameQuery: string = req.queryParams.name
       const ageQuery: number = req.queryParams.age
       return Ok("OK")
@@ -73,7 +73,7 @@ If you wish a query parameter to be optional, you can post-fix it with a `?`
 import { RouteBuilder, Ok } from "@ezapi/router-core";
 const routeDefinitions = RouteBuilder.route("searchPeople", "GET", "/people?{name?}&{age?:int}")
   .build({
-    getPersonById: async (req) => {
+    searchPeople: async (req) => {
       const nameQuery: string | undefined = req.queryParams.name
       const ageQuery: number | undefined = req.queryParams.age
       return Ok("OK")
