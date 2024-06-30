@@ -1,5 +1,5 @@
 import { BackendUtils } from "./backend";
-import { Middleware } from "./middleware";
+import { HttpMiddleware, Middleware } from "./middleware";
 import {
   Handler,
   Body,
@@ -7,7 +7,7 @@ import {
   Prettify,
   Request,
   RequestParams,
-  ApiHandler
+  ApiHandler,
 } from "./types";
 
 type ReadonlyHttpMethods = "GET" | "OPTIONS" | "HEAD";
@@ -71,9 +71,11 @@ export type RouteBuilder<A, R1 = Body, Handlers = {}> = {
    * });
    **/
   build: (handers: Handlers) => Router;
-  withMiddleware: <B, R2>(
-    m: Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
-  ) => RouteBuilder<Prettify<A & B>, R2, Handlers>;
+  withMiddleware: <MW extends HttpMiddleware<any, any, R1, any>>(
+    m: MW
+  ) => MW extends HttpMiddleware<infer AA, infer B, infer RR1, infer R2>
+    ? A extends AA ? RouteBuilder<Prettify<A & B>, R2, Handlers>
+    : never : never;
   /**
    * Adds a route to the route definitions.
    * @param name - The name of the route.
@@ -109,7 +111,7 @@ const _RouteBuilder = <
   A extends RequestParams<string>,
   B extends RequestParams<string> = A,
   R1 = Body,
-  R2 = R1
+  R2 = R1,
 >(
   definitions: RouteDefinition[],
   scopedMiddleware?: Middleware<
@@ -121,14 +123,11 @@ const _RouteBuilder = <
 ): RouteBuilder<B, R2> => {
   return {
     build: (handlers) => Router(definitions, handlers),
-    withMiddleware: <BB, R3>(
-      mw: Middleware<Request<B>, Request<BB>, Response<R2>, Response<R3>>
+    withMiddleware: (
+      mw: Middleware<any, any, any, any>
     ) => {
       const next = scopedMiddleware ? scopedMiddleware.andThen(mw) : mw;
-      return _RouteBuilder(definitions, next as any) as RouteBuilder<
-        Prettify<B & BB>,
-        R3
-      >;
+      return _RouteBuilder(definitions, next as any) as any
     },
     route: (name, method, url, mw) =>
       _RouteBuilder(
@@ -182,12 +181,21 @@ export const ApiBuilder = {
    *  "/users": userRoutes,
    * });
    */
-  build: <T extends Record<string, Router | Router[]>>(routes: Routes<T>): Router => {
+  build: <T extends Record<string, Router | Router[]>>(
+    routes: Routes<T>
+  ): Router => {
     const { handlers, definitions } = Object.keys(routes).reduce(
       (acc, prefix) => {
-        const routerOrRouters = (routes as Record<string, Router | Router[]>)[prefix];
-        const routers = Array.isArray(routerOrRouters) ? routerOrRouters : [routerOrRouters];
-        const allHandlers = routers.reduce((acc,r) => ({...acc, ...r.handlers()}), {} as Record<string, Handler<any, Response<any>>>)
+        const routerOrRouters = (routes as Record<string, Router | Router[]>)[
+          prefix
+        ];
+        const routers = Array.isArray(routerOrRouters)
+          ? routerOrRouters
+          : [routerOrRouters];
+        const allHandlers = routers.reduce(
+          (acc, r) => ({ ...acc, ...r.handlers() }),
+          {} as Record<string, Handler<any, Response<any>>>
+        );
         const handlers = Object.keys(allHandlers).reduce((acc, name) => {
           const handler = allHandlers[name];
           const prefixedName = `${stripForwardSlash(prefix)}.${name}`;

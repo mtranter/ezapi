@@ -9,6 +9,7 @@ import {
 } from "@ezapi/router-core";
 import { JsonParserMiddlerware } from "@ezapi/json-middleware";
 import { ZodMiddleware } from "@ezapi/zod-middleware";
+import { JwtMiddleware } from "@ezapi/jwt-middleware";
 import { z } from "zod";
 import { PeopleService } from "./people-service";
 
@@ -23,8 +24,8 @@ const PersonSchema = z.object({
   ...PersonRequestProps,
 });
 
-export const LoggingMiddleware = <R>() =>
-  HttpMiddleware.of<{}, {}, R, R>(async (originalRequest, handler) => {
+export const LoggingMiddleware = () =>
+  HttpMiddleware.of<{}, {}, unknown, unknown>(async (originalRequest, handler) => {
     console.log(`Request`, originalRequest);
     const response = handler(originalRequest);
     console.log(`Response`, response);
@@ -35,6 +36,7 @@ export const routeDefinition = RouteBuilder.withMiddleware(
   JsonParserMiddlerware
 )
   .withMiddleware(LoggingMiddleware())
+  .withMiddleware(JwtMiddleware({ secret: ""}))
   .route("getPersonById", "GET", "/{id:int}")
   .route("getPersonByName", "GET", "/name/{name}")
   .route(

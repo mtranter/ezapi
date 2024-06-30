@@ -14,12 +14,12 @@ export type JwtMiddlewareOptions = {
   verifier?: Pick<typeof jwt, "verify">;
 };
 
-export const JwtMiddleware = <A, B>({
+export const JwtMiddleware = ({
   verifyOptions,
   secret,
   verifier,
 }: JwtMiddlewareOptions) =>
-  HttpMiddleware.from<{}, { jwtClaims: JwtClaims; jwtToken: string }, A, B>(
+  HttpMiddleware.from<{}, { jwtClaims: JwtClaims; jwtToken: string }, unknown, unknown>(
     (handler) => async (req) => {
       const authHeader = req.headers.authorization || req.headers.Authorization;
       if (!authHeader) {

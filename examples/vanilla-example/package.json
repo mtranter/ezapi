@@ -25,6 +25,7 @@
     "@ezapi/router-core": "workspace:^",
     "@ezapi/zod-middleware": "workspace:^",
     "@ezapi/vanilla-backend": "workspace:^",
+    "@ezapi/jwt-middleware": "workspace:^",
     "zod": "^3.19.1"
   },
   "devDependencies": {

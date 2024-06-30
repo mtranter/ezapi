@@ -88,6 +88,9 @@ importers:
       '@ezapi/json-middleware':
         specifier: workspace:^
         version: link:../../packages/middleware/json
+      '@ezapi/jwt-middleware':
+        specifier: workspace:^
+        version: link:../../packages/middleware/jwt
       '@ezapi/router-core':
         specifier: workspace:^
         version: link:../../packages/router-core
