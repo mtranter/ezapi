@@ -25,7 +25,7 @@ const PersonSchema = z.object({
 });
 
 export const LoggingMiddleware = () =>
-  HttpMiddleware.of<{}, {}, unknown, unknown>(async (originalRequest, handler) => {
+  HttpMiddleware.of(async (originalRequest, handler) => {
     console.log(`Request`, originalRequest);
     const response = handler(originalRequest);
     console.log(`Response`, response);

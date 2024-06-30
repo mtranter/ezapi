@@ -45,7 +45,7 @@ export type HttpMiddleware<A, B, R1, R2> = Middleware<
 export const HttpMiddleware = {
   Id: <A, R1 = Body>() =>
     MiddlewareOps<Request<A>, Request<A>, Response<R1>, Response<R1>>((h) => h),
-  of: <A = {}, B = A, R1 = Body, R2 = R1>(
+  of: <A = {}, B = A, R1 = unknown, R2 = R1>(
     f: (
       originalRequest: Request<A>,
       handler: Handler<Request<A & B>, Response<R2>>
@@ -59,7 +59,7 @@ export const HttpMiddleware = {
     > = (hb) => (r) => f(r, hb as Handler<Request<B>, Response<R2>>);
     return MiddlewareOps(off);
   },
-  from: <A, B, R1, R2>(
+  from: <A = {}, B = {}, R1 = unknown, R2 = unknown>(
     mw: _Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
   ): HttpMiddleware<A, B, R1, R2> => MiddlewareOps(mw),
 };
