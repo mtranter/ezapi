@@ -1,5 +1,5 @@
 import { BackendUtils } from "./backend";
-import { HttpMiddleware, Middleware } from "./middleware";
+import { HttpMiddleware, Middleware, PassThrough } from "./middleware";
 import {
   Handler,
   Body,
@@ -55,6 +55,7 @@ export type HandlersOf<R> = R extends RouteBuilder<infer _, infer __, infer H>
   ? H
   : never;
 
+type SuperType<A, B> = B extends A ? A : never;
 export type RouteBuilder<A, R1 = Body, Handlers = {}> = {
   /**
    * Builds a router from the route definitions.
@@ -71,11 +72,22 @@ export type RouteBuilder<A, R1 = Body, Handlers = {}> = {
    * });
    **/
   build: (handers: Handlers) => Router;
-  withMiddleware: <MW extends HttpMiddleware<any, any, R1, any>>(
+  withMiddleware: <
+    RR1 extends R1 | PassThrough,
+    MW extends HttpMiddleware<any, any, RR1, any>,
+  >(
     m: MW
-  ) => MW extends HttpMiddleware<infer AA, infer B, infer RR1, infer R2>
-    ? A extends AA ? RouteBuilder<Prettify<A & B>, R2, Handlers>
-    : never : never;
+  ) => MW extends HttpMiddleware<infer AA, infer B, RR1, infer R2>
+    ? A extends AA
+      ? RouteBuilder<
+          Prettify<AA & B>,
+          R2 extends PassThrough ? R1 : R2,
+          Handlers
+        >
+      : AA extends PassThrough
+        ? RouteBuilder<A, R2 extends PassThrough ? R1 : R2, Handlers>
+        : never
+    : never;
   /**
    * Adds a route to the route definitions.
    * @param name - The name of the route.
@@ -88,23 +100,28 @@ export type RouteBuilder<A, R1 = Body, Handlers = {}> = {
    * .route("createUser", "POST", "/", ZodMiddleware(UserSchema))
    * .route("getUser", "GET", "/{id}")
    **/
-  route: <N extends string, Url extends string, B = {}, R2 = R1>(
+  route: <
+    N extends string,
+    Url extends string,
+    B = A,
+    R2 = R1
+  >(
     name: N,
     method: HttpMethod,
     url: Url,
-    middleware?: Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
+    middleware?: HttpMiddleware<A, B, R1, R2>
   ) => RouteBuilder<
-    A,
-    R1,
-    Prettify<
-      Handlers & {
-        [K in N]: Handler<
-          Request<Prettify<A & B & RequestParams<Url>>>,
-          Response<R2>
+          A,
+          R1,
+          Prettify<
+            Handlers & {
+              [K in N]: Handler<
+                Request<Prettify<A & B & RequestParams<Url>>>,
+                Response<R2>
+              >;
+            }
+          >
         >;
-      }
-    >
-  >;
 };
 
 const _RouteBuilder = <
@@ -123,11 +140,9 @@ const _RouteBuilder = <
 ): RouteBuilder<B, R2> => {
   return {
     build: (handlers) => Router(definitions, handlers),
-    withMiddleware: (
-      mw: Middleware<any, any, any, any>
-    ) => {
+    withMiddleware: (mw: Middleware<any, any, any, any>) => {
       const next = scopedMiddleware ? scopedMiddleware.andThen(mw) : mw;
-      return _RouteBuilder(definitions, next as any) as any
+      return _RouteBuilder(definitions, next as any) as any;
     },
     route: (name, method, url, mw) =>
       _RouteBuilder(
@@ -145,7 +160,7 @@ const _RouteBuilder = <
           },
         ],
         scopedMiddleware
-      ),
+      ) as any,
   };
 };
 

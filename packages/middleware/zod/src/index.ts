@@ -1,12 +1,12 @@
 import { ZodError, ZodType } from "zod";
 import { HttpMiddleware } from "@ezapi/router-core";
 
-export const ZodMiddleware = <Body, R>(
-  bodyType: ZodType<Body>,
+export const ZodMiddleware = <RequestBody, R>(
+  bodyType: ZodType<RequestBody>,
   returnType?: ZodType<R>,
-  errorTransform?: (err: ZodError<Body>) => unknown
+  errorTransform?: (err: ZodError<RequestBody>) => unknown
 ) =>
-  HttpMiddleware.of<{ jsonBody: unknown }, { safeBody: Body }, unknown, R>(
+  HttpMiddleware.of<{ jsonBody: unknown }, { safeBody: RequestBody }, unknown, R>(
     async (req, handler) => {
       const parseResult = bodyType.safeParse(req.jsonBody);
       if (parseResult.success) {

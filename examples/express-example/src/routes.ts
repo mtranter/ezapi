@@ -23,18 +23,18 @@ const PersonSchema = z.object({
   ...PersonRequestProps,
 });
 
-export const LoggingMiddleware = <R>() =>
-  HttpMiddleware.of<{}, {}, R, R>(async (originalRequest, handler) => {
+export const LoggingMiddleware = HttpMiddleware.of(
+  async (originalRequest, handler) => {
     console.log(`Request`, originalRequest);
-    const response = handler(originalRequest);
+    const response = await handler(originalRequest);
     console.log(`Response`, response);
     return response;
-  });
+  }
+);
 
 export const routeDefinition = RouteBuilder.withMiddleware(
   JsonParserMiddlerware
 )
-  .withMiddleware(LoggingMiddleware())
   .route("getPersonById", "GET", "/{id:int}")
   .route("getPersonByName", "GET", "/name/{name}")
   .route(
@@ -64,7 +64,7 @@ const handlers = (svc: PeopleService): RouteHandlers => ({
     return Ok(person);
   },
   postPerson: async (req) => {
-    console.log(JSON.stringify(req))
+    console.log(JSON.stringify(req));
     const newPerson = await svc.putPerson(req.safeBody);
     return Created(newPerson, `/people/${newPerson.id}`);
   },

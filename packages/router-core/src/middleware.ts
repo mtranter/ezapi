@@ -1,5 +1,8 @@
 import { Body, Handler, Prettify, Request, Response } from "./types";
 
+const PassThrough = Symbol("PassThrough");
+export type PassThrough = typeof PassThrough;
+
 type _Middleware<A, B, R1, R2> = <AA extends A = A>(
   handler: Handler<Prettify<AA & B>, R2>
 ) => Handler<AA, R1>;
@@ -45,7 +48,7 @@ export type HttpMiddleware<A, B, R1, R2> = Middleware<
 export const HttpMiddleware = {
   Id: <A, R1 = Body>() =>
     MiddlewareOps<Request<A>, Request<A>, Response<R1>, Response<R1>>((h) => h),
-  of: <A = {}, B = A, R1 = unknown, R2 = R1>(
+  of: <A = PassThrough, B = A, R1 = PassThrough, R2 = R1>(
     f: (
       originalRequest: Request<A>,
       handler: Handler<Request<A & B>, Response<R2>>
@@ -59,7 +62,7 @@ export const HttpMiddleware = {
     > = (hb) => (r) => f(r, hb as Handler<Request<B>, Response<R2>>);
     return MiddlewareOps(off);
   },
-  from: <A = {}, B = {}, R1 = unknown, R2 = unknown>(
+  from: <A = PassThrough, B = A, R1 = PassThrough, R2 = R1>(
     mw: _Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
   ): HttpMiddleware<A, B, R1, R2> => MiddlewareOps(mw),
 };
