@@ -1,4 +1,4 @@
-import { Body, HttpMiddleware } from "@ezapi/router-core";
+import { Body, HttpMiddleware, PassThrough } from "@ezapi/router-core";
 import mimeMatch from "mime-match";
 
 const DEFAULT_MIME_TYPE = "application/json";
@@ -24,9 +24,9 @@ const bodyToString = async (b: string | Buffer | NodeJS.ReadableStream): Promise
 }
 
 export const JsonParserMiddlerware = HttpMiddleware.of<
-  {},
+  PassThrough,
   { jsonBody: object },
-  Body,
+  string,
   unknown
 >(async (req, handler) => {
   const contentType = req.headers["content-type"];

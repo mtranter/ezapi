@@ -6,6 +6,9 @@ import {
   HandlersOf,
   HttpMiddleware,
   ApiBuilder,
+  PassThrough,
+  Unauthorized,
+  Body,
 } from "@ezapi/router-core";
 import { JsonParserMiddlerware } from "@ezapi/json-middleware";
 import { ZodMiddleware } from "@ezapi/zod-middleware";
@@ -35,6 +38,7 @@ export const LoggingMiddleware = HttpMiddleware.of(
 export const routeDefinition = RouteBuilder.withMiddleware(
   JsonParserMiddlerware
 )
+  .withMiddleware(LoggingMiddleware)
   .route("getPersonById", "GET", "/{id:int}")
   .route("getPersonByName", "GET", "/name/{name}")
   .route(
@@ -55,6 +59,7 @@ type RouteHandlers = HandlersOf<typeof routeDefinition>;
 const handlers = (svc: PeopleService): RouteHandlers => ({
   getPersonById: async (r) => {
     const person = await svc.getPerson(r.pathParams.id);
+
     return person
       ? Ok(person)
       : NotFound(`Person ${r.pathParams.id} not found`);

@@ -11,7 +11,8 @@
   "homepage": "https://github.com/mtranter/ezapi/blob/main/README.md",
   "scripts": {
     "build": "tsup ./src/index.ts --format cjs --dts",
-    "lint": "eslint *.ts*"
+    "lint": "eslint *.ts*",
+    "test": "jest"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.124",
@@ -19,7 +20,9 @@
     "eslint": "^7.32.0",
     "eslint-config-custom": "workspace:^",
     "tsconfig": "workspace:^",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.2",
+    "@ezapi/json-middleware": "workspace:^",
+    "@ezapi/zod-middleware": "workspace:^"
   },
   "dependencies": {
     "@ezapi/router-core": "workspace:^"

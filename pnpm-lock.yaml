@@ -154,6 +154,12 @@ importers:
         specifier: workspace:^
         version: link:../../router-core
     devDependencies:
+      '@ezapi/json-middleware':
+        specifier: workspace:^
+        version: link:../../middleware/json
+      '@ezapi/zod-middleware':
+        specifier: workspace:^
+        version: link:../../middleware/zod
       '@types/aws-lambda':
         specifier: ^8.10.124
         version: 8.10.124

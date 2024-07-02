@@ -45,24 +45,32 @@ export type HttpMiddleware<A, B, R1, R2> = Middleware<
   Response<R2>
 >;
 
+type PTU<T> = T extends PassThrough ? unknown : T;
 export const HttpMiddleware = {
   Id: <A, R1 = Body>() =>
     MiddlewareOps<Request<A>, Request<A>, Response<R1>, Response<R1>>((h) => h),
-  of: <A = PassThrough, B = A, R1 = PassThrough, R2 = R1>(
+  of: <A = PassThrough, B = PassThrough, R1 = PassThrough, R2 = PassThrough>(
     f: (
-      originalRequest: Request<A>,
-      handler: Handler<Request<A & B>, Response<R2>>
+      originalRequest: Request<PTU<A>>,
+      handler: Handler<Request<PTU<A> & PTU<B>>, Response<R2>>
     ) => Promise<Response<R1>> | Response<R1>
   ): HttpMiddleware<A, B, R1, R2> => {
     const off: _Middleware<
-      Request<A>,
-      Request<B>,
+      Request<PTU<A>>,
+      Request<PTU<B>>,
       Response<R1>,
       Response<R2>
-    > = (hb) => (r) => f(r, hb as Handler<Request<B>, Response<R2>>);
-    return MiddlewareOps(off);
+    > = (hb) => (r) =>
+      f(r as Request<PTU<A>>, hb as Handler<Request<PTU<B>>, Response<R2>>);
+    return MiddlewareOps(off) as HttpMiddleware<A, B, R1, R2>;
   },
-  from: <A = PassThrough, B = A, R1 = PassThrough, R2 = R1>(
-    mw: _Middleware<Request<A>, Request<B>, Response<R1>, Response<R2>>
-  ): HttpMiddleware<A, B, R1, R2> => MiddlewareOps(mw),
+  from: <A = PassThrough, B = PassThrough, R1 = PassThrough, R2 = PassThrough>(
+    mw: _Middleware<
+      Request<PTU<A>>,
+      Request<PTU<B>>,
+      Response<PTU<R1>>,
+      Response<PTU<R2>>
+    >
+  ): HttpMiddleware<A, B, R1, R2> =>
+    MiddlewareOps(mw) as HttpMiddleware<A, B, R1, R2>,
 };

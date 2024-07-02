@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { HttpMiddleware } from "./middleware";
+import { HttpMiddleware, type PassThrough } from "./middleware";
 import { Ok } from "./responses";
 import {
   ApiBuilder,
@@ -12,8 +12,8 @@ import {
 import { Request, Response, Body, RequestParams } from "./types";
 
 describe("Router", () => {
-  const testMiddleware = <R>(stuff: string) =>
-    HttpMiddleware.of<{}, { stuff: string }, R>(async (orig, handler) => {
+  const testMiddleware = (stuff: string) =>
+    HttpMiddleware.of<PassThrough, { stuff: string }>(async (orig, handler) => {
       const newReq = { ...orig, ...{ stuff } };
       const response = await handler(newReq);
       return response;
@@ -62,11 +62,12 @@ describe("Router", () => {
 
     it("should respect middleware", async () => {
       let didCall = false;
+      const testMW = testMiddleware("hello");
       const api = RouteBuilder.route(
         "createPerson",
         "GET",
         "/",
-        testMiddleware("hello")
+        testMW
       ).build({
         createPerson: async (req) => {
           didCall = true;

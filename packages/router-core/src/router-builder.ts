@@ -85,7 +85,11 @@ export type RouteBuilder<A, R1 = Body, Handlers = {}> = {
           Handlers
         >
       : AA extends PassThrough
-        ? RouteBuilder<A, R2 extends PassThrough ? R1 : R2, Handlers>
+        ? RouteBuilder<
+            Prettify<A & B>,
+            R2 extends PassThrough ? R1 : R2,
+            Handlers
+          >
         : never
     : never;
   /**
@@ -103,25 +107,35 @@ export type RouteBuilder<A, R1 = Body, Handlers = {}> = {
   route: <
     N extends string,
     Url extends string,
-    B = A,
-    R2 = R1
+    MW extends Middleware<
+      Request<A | PassThrough>,
+      any,
+      Response<R1 | PassThrough>,
+      any
+    > = HttpMiddleware<A, A, R1, R1>,
   >(
     name: N,
     method: HttpMethod,
     url: Url,
-    middleware?: HttpMiddleware<A, B, R1, R2>
-  ) => RouteBuilder<
-          A,
-          R1,
-          Prettify<
-            Handlers & {
-              [K in N]: Handler<
-                Request<Prettify<A & B & RequestParams<Url>>>,
-                Response<R2>
-              >;
-            }
-          >
-        >;
+    middleware?: MW
+  ) => MW extends Middleware<any, Request<infer B>, any, Response<infer R2>>
+    ? RouteBuilder<
+        A,
+        R1,
+        Prettify<
+          Handlers & {
+            [K in N]: Handler<
+              Request<
+                Prettify<
+                  A & (B extends PassThrough ? {} : B) & RequestParams<Url>
+                >
+              >,
+              Response<R2 extends PassThrough ? R1 : R2>
+            >;
+          }
+        >
+      >
+    : never;
 };
 
 const _RouteBuilder = <
@@ -154,7 +168,7 @@ const _RouteBuilder = <
             name,
             middleware: scopedMiddleware
               ? mw
-                ? scopedMiddleware.andThen(mw)
+                ? scopedMiddleware.andThen(mw as any)
                 : scopedMiddleware
               : mw,
           },

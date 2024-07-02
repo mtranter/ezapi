@@ -24,18 +24,17 @@ const PersonSchema = z.object({
   ...PersonRequestProps,
 });
 
-export const LoggingMiddleware = () =>
-  HttpMiddleware.of(async (originalRequest, handler) => {
+export const LoggingMiddleware = HttpMiddleware.of(async (originalRequest, handler) => {
     console.log(`Request`, originalRequest);
-    const response = handler(originalRequest);
+    const response = await handler(originalRequest);
     console.log(`Response`, response);
     return response;
   });
 
-export const routeDefinition = RouteBuilder.withMiddleware(
+export const routeDefinition = RouteBuilder.withMiddleware(LoggingMiddleware).withMiddleware(
   JsonParserMiddlerware
 )
-  .withMiddleware(LoggingMiddleware())
+  .withMiddleware(LoggingMiddleware)
   .withMiddleware(JwtMiddleware({ secret: ""}))
   .route("getPersonById", "GET", "/{id:int}")
   .route("getPersonByName", "GET", "/name/{name}")
